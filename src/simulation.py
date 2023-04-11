@@ -43,9 +43,16 @@ class Simulate(object):
         device = qml.device('qiskit.aer', wires=self.n_qubits, backend='qasm_simulator')
         return device
     
-    def prepare_rho(self, theta, phi, p):
-        rho = self.rho_AB(theta, phi, p)
-        return rho
+    def prepare_rho(self, theta, phi, p, gamma=None):
+        if gamma == None:
+            rho = self.rho_AB(theta, phi, p)
+            return rho
+        else:
+            rho = self.rho_AB(theta, phi, p, gamma)
+            return rho
+
+    def prepare_target_op(self, theta, phi, p, gamma):
+        QCH.get_target_op(self.prepare_rho(theta, phi, p))
 
     def plot_theoric_map(self, theta, phi):
         a = tm()
@@ -183,7 +190,7 @@ class Simulate(object):
         #plt.legend(loc=0)
         #plt.show()
 
-    def run_calcs(self, save, theta, phi):
+    def run_calcs(self, save, theta, phi):#, gamma=None):
         #coerencias_R = []
         coerencias_L = []
         pretrain = True
@@ -200,6 +207,7 @@ class Simulate(object):
             #------------------------------------------------------------
             #target_op = bpf(pi/2, 0, p)
             target_op = QCH.get_target_op(self.prepare_rho(theta, phi, p))
+            #target_op = self.prepare_target_op(theta, phi, p, gamma)
             #------------------------------------------------------------
 
             self.qc, self.qr, params = self.optmize(self.epochs, self.n_qubits, circuit, params, target_op, pretrain, self.step_to_start)
@@ -236,14 +244,14 @@ class Simulate(object):
 
 def main():
     #space = np.linspace(0, 2*pi, )
-    n_qubits = 2
-    list_p = np.linspace(0,1,5)
-    epochs = 1
-    step_to_start = 1
+    n_qubits = 3
+    list_p = np.linspace(0,1,21)
+    epochs = 130
+    step_to_start = 80
     rho_AB = QCH.rho_AB_adg
 
     S = Simulate('adg', n_qubits, list_p, epochs, step_to_start, rho_AB)
-    S.run_calcs(False, pi/2, 0)
+    S.run_calcs(True, pi/2, 0)
 
     #phis = [0,pi,pi/1.5,pi/2,pi/3,pi/4,pi/5]
     #S.run_sequential_bf(phis)

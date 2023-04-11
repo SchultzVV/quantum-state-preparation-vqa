@@ -92,16 +92,17 @@ class QuantumChannels(object):
                         -(sqrt(p/4)*exp(1j*phi)*sin(theta/2))
                         ]])
         return state
-
-    def rho_AB_adg(theta, phi, p):
-        state = Matrix([[(sqrt(1-3*p/4)*cos(theta/2)),
-                        (sqrt(1-3*p/4)*exp(1j*phi)*sin(theta/2)),
-                        (sqrt(p/4)*cos(theta/2)),
-                        (sqrt(p/4)*exp(1j*phi)*sin(theta/2)),
-                        (1j*sqrt(p/4)*cos(theta/2)),
-                        (-1j*sqrt(p/4)*exp(1j*phi)*sin(theta/2)),
-                        (sqrt(p/4)*cos(theta/2)),
-                        -(sqrt(p/4)*exp(1j*phi)*sin(theta/2))
+    @staticmethod
+    def rho_AB_adg(theta, phi, p):#, gamma):
+        gamma = 0.5
+        state = Matrix([[sqrt(p)*cos(theta/2),
+                         sqrt(p*gamma)*exp(1j*phi)*sin(theta/2), #|001\rangle),
+                         sqrt((1-p)*(1-gamma))*cos(theta/2), #|010\rangle
+                         0, # |011\rangle
+                         sqrt(p*(1-gamma))*exp(1j*phi)*sin(theta/2), #|100\rangle),
+                         0, #|101\rangle)
+                         sqrt(1-p)*exp(1j*phi)*sin(theta/2), #|110\rangle)
+                         sqrt((1-p)*gamma)*cos(theta/2) #|111\rangle)
                         ]])
         return state
 
@@ -113,13 +114,29 @@ class QuantumChannels(object):
             p = Symbol('p',real=True, positive=True)
         print(rho(theta, phi, p))
 
+    def show_eq_with_gamma(rho, theta=None, phi=None, gamma=None, p=None):
+        if theta == None or phi == None or gamma == None or p == None:
+            theta = Symbol('theta',real=True)
+            phi = Symbol('phi',real=True)
+            gamma = Symbol('gamma',real=True, positive=True)
+            p = Symbol('p',real=True, positive=True)
+        print(rho(theta, phi, p, gamma))
+
 
 def main():
-    QCH = QuantumChannels()
-    rho = QCH.rho_AB_d
-    QCH.show_eq(rho)
-    #print(QCH.get_target_op(rho))
-    #QCH.show_eq(rho)
+    from sympy import Symbol,simplify,print_latex
+    import sys
+    sys.path.append('runtime-qiskit')
+    sys.path.append('src')
+    from theoric_channels import TheoricMaps
+    a = TheoricMaps()
+    theta = Symbol('theta',real=True)
+    phi = Symbol('phi',real=True)
+    gamma = Symbol('gamma',real=True, positive=True)
+    p = Symbol('p',real=True, positive=True)
+    from kraus_maps import QuantumChannels
+    a = QuantumChannels()
+    print(simplify(a.rho_AB_adg(theta,phi,p, gamma)))
 
 if __name__ == "__main__":
     main()

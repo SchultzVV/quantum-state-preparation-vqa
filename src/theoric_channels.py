@@ -75,7 +75,7 @@ class TheoricMaps():
     
     def print_state(self):
         
-        self.theoric_rho_A_adg(self.theta,self.phi, self.p)
+        return print_latex(self.theoric_rho_A_adg(self.theta,self.phi, self.p))
 
     def theoric_rho_A_ad(self,theta, phi, p):
         state = Matrix([[p*(sin(theta/2)**2)+(cos(theta/2)**2),
@@ -128,7 +128,7 @@ class TheoricMaps():
         return state
     
     def theoric_rho_A_adg(self, theta, phi, p):
-        gamma = 0.5
+        gamma = 0.15
         state = Matrix([[p*(cos(theta/2)**2)+p*gamma*(sin(theta/2)**2)+(1-p)*(1-gamma)*(cos(theta/2)**2),
                         sqrt(1-gamma)*exp(-1j*phi)*sin(theta/2)*cos(theta/2)],[
                         sqrt(1-gamma)*exp(1j*phi)*sin(theta/2)*cos(theta/2),
@@ -180,13 +180,14 @@ class TheoricMaps():
     
 def main():
     a = TheoricMaps()
+    a.print_state()
     #--------- para plotar os mapas para diferentes valores de theta e phi:-------
     #a.plot_all_theoric_space('ad')
     #a.plot_all_theoric_space('pf')
     #a.plot_all_theoric_space('bf')
     #a.plot_all_theoric_space('bpf')
     #a.plot_all_theoric_space('d')
-    #a.plot_all_theoric_space('adg')
+    a.plot_all_theoric_space('adg')
     #a.plot_all_theoric_space('l')
     #-----------------------------------------------------------------------------
     
@@ -206,12 +207,12 @@ def main():
     #a.plot_theoric(x,'bpf',theta=pi/2,phi=0.0)
 
     #a.plot_storaged('d')
-    a.plot_theoric(x,'d',theta=pi/2,phi=0)
+    #a.plot_theoric(x,'d',theta=pi/2,phi=0)
 
     #a.plot_storaged('l')
     #a.plot_theoric(x,'l',theta=pi/2,phi=0)
     #a.plot_storaged('adg')
-    #a.plot_theoric(x,'adg',theta=pi/2,phi=0)
+    a.plot_theoric(x,'adg',theta=pi/2,phi=0)
     plt.legend(loc=1)
     plt.show()
     #-----------------------------------------------------------------------------
