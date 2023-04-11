@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from torch import tensor
 from numpy import pi
+import os
 import sys
 sys.path.append('runtime-qiskit')
 sys.path.append('src')
@@ -161,7 +162,7 @@ class Simulate(object):
         parametros = best_params.clone().detach().numpy()
         qc, qr = self.general_vqacircuit_qiskit(self.n_qubits, parametros)
         best_params = Variable(tensor(parametros), requires_grad=True)
-        return qc, qr, best_params
+        return qc, qr, best_params, f
 
     def tomograph(self):
         qstc = state_tomography_circuits(self.qc, [self.qr[0],self.qr[1]])
@@ -210,32 +211,33 @@ class Simulate(object):
             #target_op = self.prepare_target_op(theta, phi, p, gamma)
             #------------------------------------------------------------
 
-            self.qc, self.qr, params = self.optmize(self.epochs, self.n_qubits, circuit, params, target_op, pretrain, self.step_to_start)
+            self.qc, self.qr, params, f = self.optmize(self.epochs, self.n_qubits, circuit, params, target_op, pretrain, self.step_to_start)
             pretrain = False
+            data = {'map_name': self.map_name,
+                    'params': params,
+                    'epochs': self.epochs,
+                    'theta': theta,
+                    'phi': phi,
+                    'p': p}
+            print(data)
+            if save:
+                filename = f'data/{self.map_name}/paramsP_{p:.1f}theta_{theta:.2f}_phi{phi:.2f}.pkl'
+                if os.path.isfile(filename):
+                    print(f'O arquivo {filename} já existe. Não salve novamente.')
+                    pass
+                else:
+                    with open(filename, 'wb') as f:
+                        pickle.dump(data, f)
             rho = self.tomograph()
             #print(rho)
             self.coerencias_L, self.coerencias_R = self.results(rho, self.coerencias_R, coerencias_L)
-        mylist = [self.coerencias_L, self.coerencias_R, params]
+        mylist = [self.coerencias_L, self.coerencias_R]
         if save:
-            with open(f'data/{self.map_name}/ClassTestcasa.pkl', 'wb') as f:
+            with open(f'data/{self.map_name}/coerencia_L_e_R.pkl', 'wb') as f:
                 pickle.dump(mylist, f)
-        #plot_theoric_ad(list_p)
         
-        #s = np.linspace(0,1,10)
-        #z = a.theoric_rho_A_ad(np.pi/2,0,0)
-        #tm.plot_theoric(self.list_p,self.theoric)
-        
-        #tm.plot_theoric(list_p=self.list_p,map_name=map,theta=theta,phi=phi)
-        #self.prepare_plot(self.list_p)
-        #print(self.map_name)
-        #print(self.list_p)
-        #print(theta)
-        #print(phi)
         self.plot_theoric_map(theta, phi)
         self.plots(self.list_p, self.coerencias_L)
-        #save = [list_p, coerencias_R, coerencias_L]
-        #with open('data/BPFlist_p-coerencias_R-coerencias_L.pkl', 'wb') as f:
-        #    pickle.dump(save, f)
     
     def run_sequential_bf(self, phis):
         for i in phis:
@@ -244,14 +246,14 @@ class Simulate(object):
 
 def main():
     #space = np.linspace(0, 2*pi, )
-    n_qubits = 3
-    list_p = np.linspace(0,1,2)
+    n_qubits = 2
+    list_p = np.linspace(0,1,21)
     epochs = 1
-    step_to_start = 1
-    rho_AB = QCH.rho_AB_adg
+    step_to_start = 5
+    rho_AB = QCH.rho_AB_ad
 
-    S = Simulate('adg', n_qubits, list_p, epochs, step_to_start, rho_AB)
-    S.run_calcs(False, pi/2, 0)
+    S = Simulate('ad', n_qubits, list_p, epochs, step_to_start, rho_AB)
+    S.run_calcs(True, pi/2, 0)
     
     #phis = [0,pi,pi/1.5,pi/2,pi/3,pi/4,pi/5]
     #S.run_sequential_bf(phis)
