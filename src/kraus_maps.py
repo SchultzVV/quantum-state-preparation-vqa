@@ -81,28 +81,29 @@ class QuantumChannels(object):
     #                    (1j*sqrt(p/4)*cos(theta/2)),
     #                    0]])
     #    return state
+    @staticmethod
     def rho_AB_d(theta, phi, p):
         state = Matrix([[(sqrt(1-3*p/4)*cos(theta/2)),
-                        (sqrt(1-3*p/4)*exp(1j*phi)*sin(theta/2)),
-                        (sqrt(p/4)*cos(theta/2)),
                         (sqrt(p/4)*exp(1j*phi)*sin(theta/2)),
-                        (1j*sqrt(p/4)*cos(theta/2)),
                         (-1j*sqrt(p/4)*exp(1j*phi)*sin(theta/2)),
                         (sqrt(p/4)*cos(theta/2)),
-                        -(sqrt(p/4)*exp(1j*phi)*sin(theta/2))
+                        (sqrt(1-3*p/4)*exp(1j*phi)*sin(theta/2)),
+                        (sqrt(p/4)*cos(theta/2)),
+                        (1j*sqrt(p/4)*cos(theta/2)),
+                        (-sqrt(p/4)*exp(1j*phi)*sin(theta/2))
                         ]])
         return state
     @staticmethod
     def rho_AB_adg(theta, phi, p):#, gamma):
-        gamma = 0.5
-        state = Matrix([[sqrt(p)*cos(theta/2),
-                         sqrt(p*gamma)*exp(1j*phi)*sin(theta/2), #|001\rangle),
-                         sqrt((1-p)*(1-gamma))*cos(theta/2), #|010\rangle
-                         0, # |011\rangle
-                         sqrt(p*(1-gamma))*exp(1j*phi)*sin(theta/2), #|100\rangle),
-                         0, #|101\rangle)
-                         sqrt(1-p)*exp(1j*phi)*sin(theta/2), #|110\rangle)
-                         sqrt((1-p)*gamma)*cos(theta/2) #|111\rangle)
+        N = 0.5
+        state = Matrix([[sqrt(1-N)*cos(theta/2),# |000\rangle \\
+                         sqrt(p*(1-N))*exp(1j*phi)*sin(theta/2),# |001\rangle\\
+                         sqrt(N*(1-p))*cos(theta/2),# |010\rangle\\
+                         0,# |011\rangle,
+                         sqrt((1-N)*(1-p))*exp(1j*phi)*sin(theta/2),# |100\rangle\\
+                         0,
+                         sqrt(N)*exp(1j*phi)*sin(theta/2),# |110\rangle\\
+                         sqrt(p*N)*cos(theta/2)# |111\rangle
                         ]])
         return state
 
@@ -136,7 +137,7 @@ def main():
     p = Symbol('p',real=True, positive=True)
     from kraus_maps import QuantumChannels
     a = QuantumChannels()
-    print(simplify(a.rho_AB_adg(theta,phi,p, gamma)))
+    print_latex(a.rho_AB_d(theta,phi,p))
 
 if __name__ == "__main__":
     main()

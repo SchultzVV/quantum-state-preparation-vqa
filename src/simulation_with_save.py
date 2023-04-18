@@ -221,13 +221,13 @@ class Simulate(object):
                     'p': p}
             print(data)
             if save:
-                filename = f'data/{self.map_name}/paramsP_{p:.1f}theta_{theta:.2f}_phi{phi:.2f}.pkl'
-                if os.path.isfile(filename):
-                    print(f'O arquivo {filename} já existe. Não salve novamente.')
-                    pass
-                else:
-                    with open(filename, 'wb') as f:
-                        pickle.dump(data, f)
+                filename = f'data/{self.map_name}/paramsP_{p:.2f}theta_{theta:.2f}_phi{phi:.2f}.pkl'
+#                if os.path.isfile(filename):
+#                    print(f'O arquivo {filename} já existe. Não salve novamente.')
+#                    pass
+#                else:
+                with open(filename, 'wb') as f:
+                    pickle.dump(data, f)
             rho = self.tomograph()
             #print(rho)
             self.coerencias_L, self.coerencias_R = self.results(rho, self.coerencias_R, coerencias_L)
@@ -246,13 +246,12 @@ class Simulate(object):
 
 def main():
     #space = np.linspace(0, 2*pi, )
-    n_qubits = 2
+    n_qubits = 3
     list_p = np.linspace(0,1,21)
-    epochs = 1
-    step_to_start = 5
-    rho_AB = QCH.rho_AB_ad
-
-    S = Simulate('ad', n_qubits, list_p, epochs, step_to_start, rho_AB)
+    epochs = 150
+    step_to_start = 80
+    rho_AB = QCH.rho_AB_adg
+    S = Simulate('adg', n_qubits, list_p, epochs, step_to_start, rho_AB)
     S.run_calcs(True, pi/2, 0)
     
     #phis = [0,pi,pi/1.5,pi/2,pi/3,pi/4,pi/5]

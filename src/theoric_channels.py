@@ -75,7 +75,7 @@ class TheoricMaps():
     
     def print_state(self):
         
-        return print_latex(self.theoric_rho_A_adg(self.theta,self.phi, self.p))
+        return print_latex(self.coherence(self.theoric_rho_A_adg(self.theta,self.phi, self.p)))
 
     def theoric_rho_A_ad(self,theta, phi, p):
         state = Matrix([[p*(sin(theta/2)**2)+(cos(theta/2)**2),
@@ -83,7 +83,7 @@ class TheoricMaps():
                         (sqrt(1-p)*cos(theta/2)*exp(1j*phi)*sin(theta/2)),
                         ((1-p)*sin(theta/2)**2)]])
         return state
-    
+
     def theoric_rho_A_bf(self, theta, phi, p):
         state = Matrix([[(1-p)*((cos(theta/2))**2) + p*((sin(theta/2))**2),
                         (((exp(-1j*phi))+(2j*p*sin(phi)))*sin(theta/2)*cos(theta/2))],[
@@ -126,13 +126,14 @@ class TheoricMaps():
                         (sin(p/2)**2)*exp(-1j*phi)*cos(theta/2)*sin(theta/2)+(cos(p/2)**2)*exp(1j*phi)*cos(theta/2)*sin(theta/2),
                         (sin(p/2)**2)*(cos(theta/2)**2)+(cos(p/2)**2)*(sin(theta/2)**2)]])
         return state
-    
-    def theoric_rho_A_adg(self, theta, phi, p):
-        gamma = 0.15
-        state = Matrix([[p*(cos(theta/2)**2)+p*gamma*(sin(theta/2)**2)+(1-p)*(1-gamma)*(cos(theta/2)**2),
-                        sqrt(1-gamma)*exp(-1j*phi)*sin(theta/2)*cos(theta/2)],[
-                        sqrt(1-gamma)*exp(1j*phi)*sin(theta/2)*cos(theta/2),
-                        ((1-p*gamma)*sin(theta/2)**2)+((1-p)*gamma*cos(theta/2)**2)]])
+    @staticmethod
+    def theoric_rho_A_adg(theta, phi, p):
+        N = 0.5
+        state = Matrix([[((1-N)*cos(theta/2)+p*(1-N)*(sin(theta/2))**2+N*(1-p)*cos(theta/2)),
+                         2*sqrt(1-p)*exp(-1j*phi)*sin(theta/2)*cos(theta/2)],[
+                         2*sqrt(1-p)*exp(1j*phi)*sin(theta/2)*cos(theta/2), #|010\rangle
+                         ((1-p)+N)*sin(theta/2)**2+p*N*cos(theta/2) #|111\rangle)
+                        ]])
         return state
 
     # def theoric_rho_A_gad(self, theta, phi, p):
@@ -178,16 +179,31 @@ class TheoricMaps():
         plt.legend(labels=labels,loc=1)
         plt.show()
     
+    def coherence(self, state):
+        # Extrai os elementos do vetor de estado
+        a11, a12, a21, a22 = state.tolist()[0] 
+        # Calcula as normas L2 dos elementos
+        norm_a1 = sqrt(abs(a11)**2 + abs(a21)**2)
+        norm_a2 = sqrt(abs(a12)**2 + abs(a22)**2)
+        # Calcula o produto interno dos elementos
+        inner_product = a11.conjugate()*a22 + a12.conjugate()*a21
+        # Calcula a coerência
+        coherence = abs(inner_product)/(norm_a1*norm_a2)
+        # Retorna a expressão LaTeX da coerência
+        return coherence
+
+
 def main():
     a = TheoricMaps()
-    a.print_state()
+    #a.print_state()
     #--------- para plotar os mapas para diferentes valores de theta e phi:-------
     #a.plot_all_theoric_space('ad')
     #a.plot_all_theoric_space('pf')
     #a.plot_all_theoric_space('bf')
     #a.plot_all_theoric_space('bpf')
     #a.plot_all_theoric_space('d')
-    a.plot_all_theoric_space('adg')
+    #a.plot_all_theoric_space('adg')
+
     #a.plot_all_theoric_space('l')
     #-----------------------------------------------------------------------------
     
@@ -216,6 +232,7 @@ def main():
     plt.legend(loc=1)
     plt.show()
     #-----------------------------------------------------------------------------
-
+    #state = a.theoric_rho_A_ad
+    #print(print_latex(a.coherence(state)))
 if __name__ == "__main__":
     main()
