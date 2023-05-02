@@ -129,11 +129,18 @@ class TheoricMaps():
     @staticmethod
     def theoric_rho_A_adg(theta, phi, p):
         N = 0.5
+
         state = Matrix([[((1-N)*cos(theta/2)+p*(1-N)*(sin(theta/2))**2+N*(1-p)*cos(theta/2)),
-                         2*sqrt(1-p)*exp(-1j*phi)*sin(theta/2)*cos(theta/2)],[
-                         2*sqrt(1-p)*exp(1j*phi)*sin(theta/2)*cos(theta/2), #|010\rangle
-                         ((1-p)+N)*sin(theta/2)**2+p*N*cos(theta/2) #|111\rangle)
-                        ]])
+                        2*sqrt(1-p)*exp(-1j*phi)*sin(theta/2)*cos(theta/2)],[
+                        2*sqrt(1-p)*exp(1j*phi)*sin(theta/2)*cos(theta/2), #|010\rangle
+                        ((1-p)+N)*sin(theta/2)**2+p*N*cos(theta/2) #|111\rangle)
+                       ]])
+
+        #state = Matrix([[((1-N)*cos(theta/2)+p*(1-N)*(sin(theta/2))**2+N*(1-p)*cos(theta/2)),
+        #                 2*sqrt(1-p)*exp(-1j*phi)*sin(theta/2)*cos(theta/2)],[
+        #                 2*sqrt(1-p)*exp(1j*phi)*sin(theta/2)*cos(theta/2), #|010\rangle
+        #                 ((1-p)+N)*sin(theta/2)**2+p*N*cos(theta/2) #|111\rangle)
+        #                ]])
         return state
 
     # def theoric_rho_A_gad(self, theta, phi, p):

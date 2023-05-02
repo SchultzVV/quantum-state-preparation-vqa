@@ -246,12 +246,12 @@ class Simulate(object):
 
 def main():
     #space = np.linspace(0, 2*pi, )
-    n_qubits = 3
+    n_qubits = 2
     list_p = np.linspace(0,1,21)
-    epochs = 150
-    step_to_start = 80
-    rho_AB = QCH.rho_AB_adg
-    S = Simulate('adg', n_qubits, list_p, epochs, step_to_start, rho_AB)
+    epochs = 180
+    step_to_start = 120
+    rho_AB = QCH.rho_AB_l
+    S = Simulate('l', n_qubits, list_p, epochs, step_to_start, rho_AB)
     S.run_calcs(True, pi/2, 0)
     
     #phis = [0,pi,pi/1.5,pi/2,pi/3,pi/4,pi/5]
