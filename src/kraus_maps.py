@@ -71,16 +71,6 @@ class QuantumChannels(object):
                          ]])
         return state
 
-    #def rho_AB_d_old(theta, phi, p):
-    #    state = Matrix([[(sqrt(1-3*p/4)*cos(theta/2)),
-    #                    (sqrt(p/4)*exp(1j*phi)*sin(theta/2)),
-    #                    -1j*(sqrt(p/4)*exp(1j*phi)*sin(theta/2)),
-    #                    (sqrt(p/4)*cos(theta/2)),
-    #                    (sqrt(1-3*p/4)*exp(1j*phi)*sin(theta/2)),
-    #                    (sqrt(p/4)*cos(theta/2)),
-    #                    (1j*sqrt(p/4)*cos(theta/2)),
-    #                    0]])
-    #    return state
     @staticmethod
     def rho_AB_d(theta, phi, p):
         state = Matrix([[(sqrt(1-3*p/4)*cos(theta/2)),
@@ -106,6 +96,71 @@ class QuantumChannels(object):
                          sqrt(p*N)*cos(theta/2)# |111\rangle
                         ]])
         return state
+    
+    @staticmethod
+    def rho_AB_hw_ref(theta, phi, p):#, gamma):
+        N = 0.5
+        state = Matrix([[sqrt(p/3), # |0000\rangle 
+                         sqrt((1-p)/6), # |0001\rangle 
+                         sqrt((1-p)/6), # |0010\rangle 
+                         0, # |0011\rangle 
+                         sqrt(p/3), # |0100\rangle 
+                         sqrt(((1-p)*((1j*sqrt(3)-1)**2))/24), # |0101\rangle 
+                         sqrt(((1-p)*((-1j*sqrt(3)-1)**2))/24), # |0110\rangle 
+                         0, # |0111\rangle 
+                         sqrt(p/3), # |1000\rangle 
+                         sqrt(((1-p)*((-1j*sqrt(3)-1)**2))/24), # |1001\rangle 
+                         sqrt(((1-p)*((1j*sqrt(3)-1)**2))/24), # |1010\rangle 
+                         0, # |1011\rangle 
+                         0, # |1100\rangle 
+                         0, # |1101\rangle 
+                         0, # |1110\rangle 
+                         0, # |1111\rangle
+                        ]])
+        return state
+
+    def rho_AB_hw(theta, phi, p):#, gamma):
+        N = 0.5
+        state = Matrix([[sqrt(p/3), # |0000\rangle 
+                        sqrt((1-p)/6), # |0001\rangle 
+                        sqrt((1-p)/6), # |0010\rangle 
+                        0, # |0011\rangle 
+                        sqrt(p/3) ,# |0100\rangle  
+                        sqrt((1-p)/6)*(1j*sqrt(3)-1)/2 ,# |0101\rangle 
+                        -sqrt((1-p)/6)*(1j*sqrt(3)+1)/2 ,# |0110\rangle 
+                        0, # |0111\rangle  
+                        sqrt(p/3) ,# |1000\rangle 
+                        -sqrt((1-p)/6)*(1j*sqrt(3)+1)/2 ,# |1001\rangle 
+                        sqrt((1-p)/6)*(1j*sqrt(3)-1)/2 ,# |1010\rangle  
+                        0, # |1011\rangle 
+                        0, # |1100\rangle
+                        0, # |1101\rangle
+                        0, # |1110\rangle
+                        0  # |1111\rangle
+                        ]])
+        return state
+
+    # @staticmethod
+    # def rho_AB_hw(theta, phi, p):#, gamma):
+    #     N = 0.5
+    #     state = Matrix([[sqrt(p/3), # |0000\rangle 
+    #                      sqrt(p/3), # |0001\rangle 
+    #                      sqrt(p/3), # |0010\rangle 
+    #                      0, # |0011\rangle 
+    #                      sqrt(p/3), # |0100\rangle 
+    #                      sqrt(p/3)*(1j*sqrt(3)-1)/(2), # |0101\rangle 
+    #                      sqrt(p/3)*(1j*sqrt(3)+1)/(2), # |0110\rangle 
+    #                      0, # |0111\rangle 
+    #                      sqrt(p/3), # |1000\rangle 
+    #                      sqrt(p/3)*(1j*sqrt(3)+1)/(2), # |1001\rangle 
+    #                      sqrt(p/3)*(1j*sqrt(3)-1)/(2), # |1010\rangle 
+    #                      0, # |1011\rangle 
+    #                      0, # |1100\rangle 
+    #                      0, # |1101\rangle 
+    #                      0, # |1110\rangle 
+    #                      0, # |1111\rangle
+    #                     ]])
+    #     return state
 
     def show_eq(rho, theta=None, phi=None, gamma=None, p=None):
         if theta == None or phi == None or gamma == None or p == None:

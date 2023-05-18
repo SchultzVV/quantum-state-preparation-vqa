@@ -235,8 +235,10 @@ class Simulate(object):
         if save:
             with open(f'data/{self.map_name}/coerencia_L_e_R.pkl', 'wb') as f:
                 pickle.dump(mylist, f)
-        
-        self.plot_theoric_map(theta, phi)
+        if self.map_name == 'hw':
+            pass
+        else:
+            self.plot_theoric_map(theta, phi)
         self.plots(self.list_p, self.coerencias_L)
     
     def run_sequential_bf(self, phis):
@@ -246,13 +248,13 @@ class Simulate(object):
 
 def main():
     #space = np.linspace(0, 2*pi, )
-    n_qubits = 2
-    list_p = np.linspace(0,1,21)
-    epochs = 180
-    step_to_start = 120
-    rho_AB = QCH.rho_AB_l
-    S = Simulate('l', n_qubits, list_p, epochs, step_to_start, rho_AB)
-    S.run_calcs(True, pi/2, 0)
+    n_qubits = 4
+    list_p = np.linspace(0,1,5)
+    epochs = 120
+    step_to_start = 150
+    rho_AB = QCH.rho_AB_hw
+    S = Simulate('hw', n_qubits, list_p, epochs, step_to_start, rho_AB)
+    S.run_calcs(True, pi/2, 0,)
     
     #phis = [0,pi,pi/1.5,pi/2,pi/3,pi/4,pi/5]
     #S.run_sequential_bf(phis)

@@ -29,11 +29,12 @@ class TheoricMaps():
         return data
     
     def map_choser(self,map_name):
-        list_of_maps = ['bpf','ad','bf','pf','pd','d','adg','l']#,'H','ad3']
+        list_of_maps = ['bpf','ad','bf','pf','pd','d','adg','l','hw']#,'H','ad3']
         list_of_functions = [self.theoric_rho_A_bpf, self.theoric_rho_A_ad,
                              self.theoric_rho_A_bf, self.theoric_rho_A_pf,
                              self.theoric_rho_A_pd, self.theoric_rho_A_d,
-                             self.theoric_rho_A_adg,self.theoric_rho_A_l
+                             self.theoric_rho_A_adg, self.theoric_rho_A_l,
+                             self.theoric_rho_A_hw
                             ]
             #self.theoric_rho_A_H,
             #self.theoric_rho_A_ad3   ]
@@ -142,6 +143,17 @@ class TheoricMaps():
         #                 ((1-p)+N)*sin(theta/2)**2+p*N*cos(theta/2) #|111\rangle)
         #                ]])
         return state
+    
+    @staticmethod
+    def theoric_rho_A_adg(theta, phi, p):
+        N = 0.5
+
+        state = Matrix([[((1-N)*cos(theta/2)+p*(1-N)*(sin(theta/2))**2+N*(1-p)*cos(theta/2)),
+                        2*sqrt(1-p)*exp(-1j*phi)*sin(theta/2)*cos(theta/2)],[
+                        2*sqrt(1-p)*exp(1j*phi)*sin(theta/2)*cos(theta/2), #|010\rangle
+                        ((1-p)+N)*sin(theta/2)**2+p*N*cos(theta/2) #|111\rangle)
+                       ]])
+        return state
 
     # def theoric_rho_A_gad(self, theta, phi, p):
     #     gamma = 0.5
@@ -210,8 +222,8 @@ def main():
     #a.plot_all_theoric_space('bpf')
     #a.plot_all_theoric_space('d')
     #a.plot_all_theoric_space('adg')
-
     #a.plot_all_theoric_space('l')
+
     #-----------------------------------------------------------------------------
     
     #--------- para plotar todos os dados salvos com os valores teóricos:---------
