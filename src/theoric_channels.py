@@ -29,12 +29,12 @@ class TheoricMaps():
         return data
     
     def map_choser(self,map_name):
-        list_of_maps = ['bpf','ad','bf','pf','pd','d','adg','l','hw']#,'H','ad3']
+        list_of_maps = ['bpf','ad','bf','pf','pd','d','adg','l','h']#,'H','ad3']
         list_of_functions = [self.theoric_rho_A_bpf, self.theoric_rho_A_ad,
                              self.theoric_rho_A_bf, self.theoric_rho_A_pf,
                              self.theoric_rho_A_pd, self.theoric_rho_A_d,
                              self.theoric_rho_A_adg, self.theoric_rho_A_l,
-                             self.theoric_rho_A_hw
+                             self.theoric_rho_A_h
                             ]
             #self.theoric_rho_A_H,
             #self.theoric_rho_A_ad3   ]
@@ -145,14 +145,14 @@ class TheoricMaps():
         return state
     
     @staticmethod
-    def theoric_rho_A_adg(theta, phi, p):
+    def theoric_rho_A_h(theta, phi, p):
         N = 0.5
-
-        state = Matrix([[((1-N)*cos(theta/2)+p*(1-N)*(sin(theta/2))**2+N*(1-p)*cos(theta/2)),
-                        2*sqrt(1-p)*exp(-1j*phi)*sin(theta/2)*cos(theta/2)],[
-                        2*sqrt(1-p)*exp(1j*phi)*sin(theta/2)*cos(theta/2), #|010\rangle
-                        ((1-p)+N)*sin(theta/2)**2+p*N*cos(theta/2) #|111\rangle)
-                       ]])
+        z1 = (1j*sqrt(3)-1)/2
+        z2 = (-1j*sqrt(3)-1)/2
+        state = Matrix([[1/3,(1-p*z2)/3,(1-p*z1)/3,0
+                        ],[(1-p*z1)/3, 1/3, (1-p*z2)/3,0],[(1-p*z2)/3,(1-p*z1)/3,1/3,0],
+                        [0,0,0,0]])
+        print(state)
         return state
 
     # def theoric_rho_A_gad(self, theta, phi, p):
@@ -247,7 +247,8 @@ def main():
     #a.plot_storaged('l')
     #a.plot_theoric(x,'l',theta=pi/2,phi=0)
     #a.plot_storaged('adg')
-    a.plot_theoric(x,'adg',theta=pi/2,phi=0)
+    #a.plot_theoric(x,'adg',theta=pi/2,phi=0)
+    a.plot_theoric(x,'h',theta=pi/2,phi=0)
     plt.legend(loc=1)
     plt.show()
     #-----------------------------------------------------------------------------
