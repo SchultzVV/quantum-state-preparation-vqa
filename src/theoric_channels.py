@@ -212,6 +212,23 @@ class TheoricMaps():
         return coherence
 
 
+from numpy import cos, sin, sqrt, pi, exp
+def non_markov_list_p(lamb,gamma_0,t):
+    d = sqrt(2*gamma_0*lamb-lamb**2)
+    result = exp(-lamb*t)*(cos(d*t/2)+(lamb/d)*sin(d*t/2))**2
+    return result
+def get_list_p_noMarkov(list_p):
+    lamb = 5
+    gamma_0 = 2.8
+    list_p_noMarkov = []
+    for p in list_p:
+        list_p_noMarkov.append(non_markov_list_p(lamb,gamma_0,p))
+    return list_p_noMarkov
+
+
+
+
+
 def main():
     a = TheoricMaps()
     #a.print_state()
@@ -227,19 +244,20 @@ def main():
     #-----------------------------------------------------------------------------
     
     #--------- para plotar todos os dados salvos com os valores teóricos:---------
-    x = np.linspace(0,1,21)
-
+    #x = np.linspace(-100,100,21)
+    list_p = np.linspace(0,1,5)
+    x = get_list_p_noMarkov(list_p)
     #a.plot_storaged('ad')
-    #a.plot_theoric(x,'ad',theta=pi/2,phi=0)
+    a.plot_theoric(x,'ad',theta=pi/2,phi=0)
 
     #a.plot_storaged('pf')
-    #a.plot_theoric(x,'pf',theta=pi/2,phi=0)
+    a.plot_theoric(x,'pf',theta=pi/2,phi=0)
 
     #a.plot_storaged('bf')
-    #a.plot_theoric(x,'pf',theta=pi/2,phi=0)
+    a.plot_theoric(x,'bf',theta=pi/2,phi=0)
 
     #a.plot_storaged('bpf')
-    #a.plot_theoric(x,'bpf',theta=pi/2,phi=0.0)
+    a.plot_theoric(x,'bpf',theta=pi/2,phi=0.0)
 
     #a.plot_storaged('d')
     #a.plot_theoric(x,'d',theta=pi/2,phi=0)
@@ -248,7 +266,7 @@ def main():
     #a.plot_theoric(x,'l',theta=pi/2,phi=0)
     #a.plot_storaged('adg')
     #a.plot_theoric(x,'adg',theta=pi/2,phi=0)
-    a.plot_theoric(x,'h',theta=pi/2,phi=0)
+    #a.plot_theoric(x,'h',theta=pi/2,phi=0)
     plt.legend(loc=1)
     plt.show()
     #-----------------------------------------------------------------------------
