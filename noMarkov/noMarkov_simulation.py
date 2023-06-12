@@ -185,7 +185,7 @@ class Simulate(object):
     def plots(self, list_p, coerencias_L):
         print(list_p)
         print(len(coerencias_L))
-        plt.scatter(list_p,coerencias_L,label='Simulado')
+        plt.scatter(list_p,coerencias_L,label='Experimento')
         plt.xlabel(' p ')
         plt.ylabel(' Coerência ')
         #plt.legend(loc=0)
@@ -296,24 +296,38 @@ class Simulate(object):
         for i in phis:
             self.run_calcs(True, pi/2, i)
 
+from numpy import cos, sin, sqrt, pi, exp
+def non_markov_list_p(lamb,gamma_0,t):
+    d = sqrt(2*gamma_0*lamb-lamb**2)
+    result = exp(-lamb*t)*(cos(d*t/2)+(lamb/d)*sin(d*t/2))**2
+    return result
+def get_list_p_noMarkov(list_p):
+    lamb = 5
+    gamma_0 = 2.8
+    list_p_noMarkov = []
+    for p in list_p:
+        list_p_noMarkov.append(non_markov_list_p(lamb,gamma_0,p))
+    return list_p_noMarkov
 
 def main():
-    #space = np.linspace(0, 2*pi, )
     n_qubits = 2
-    list_p = []
     list_p = np.linspace(0,1,5)
     #pj = 
-    epochs = 1
-    step_to_start = 1
-    rho_AB = QCH.rho_AB_bpf
-    S = Simulate('bpf', n_qubits, list_p, epochs, step_to_start, rho_AB)
+    list_p = get_list_p_noMarkov(list_p)
+    print(list_p)
+    print(type(list_p))
+    #s.exit()
+    epochs = 80
+    step_to_start = 45
+    rho_AB = QCH.rho_AB_ad
+    S = Simulate('ad', n_qubits, list_p, epochs, step_to_start, rho_AB)
     S.run_calcs_noMarkov(False, pi/2, 0)
     #S.run_calcs(True, pi/2, 0)
     
     #phis = [0,pi,pi/1.5,pi/2,pi/3,pi/4,pi/5]
     #S.run_sequential_bf(phis)
-    #plt.legend(loc=1)
-    #plt.show()
+    plt.legend(loc=1)
+    plt.show()
 
 if __name__ == "__main__":
     main()

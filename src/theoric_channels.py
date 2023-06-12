@@ -132,8 +132,8 @@ class TheoricMaps():
         N = 0.5
 
         state = Matrix([[((1-N)*cos(theta/2)+p*(1-N)*(sin(theta/2))**2+N*(1-p)*cos(theta/2)),
-                        2*sqrt(1-p)*exp(-1j*phi)*sin(theta/2)*cos(theta/2)],[
-                        2*sqrt(1-p)*exp(1j*phi)*sin(theta/2)*cos(theta/2), #|010\rangle
+                        sqrt(1-p)*exp(-1j*phi)*sin(theta/2)*cos(theta/2)],[
+                        sqrt(1-p)*exp(1j*phi)*sin(theta/2)*cos(theta/2), #|010\rangle
                         ((1-p)+N)*sin(theta/2)**2+p*N*cos(theta/2) #|111\rangle)
                        ]])
 
@@ -145,7 +145,7 @@ class TheoricMaps():
         return state
     
     @staticmethod
-    def theoric_rho_A_h(theta, phi, p):
+    def theoric_rho_A_h2(theta, phi, p):
         N = 0.5
         z1 = (1j*sqrt(3)-1)/2
         z2 = (-1j*sqrt(3)-1)/2
@@ -153,6 +153,15 @@ class TheoricMaps():
                         ],[(1-p*z1)/3, 1/3, (1-p*z2)/3,0],[(1-p*z2)/3,(1-p*z1)/3,1/3,0],
                         [0,0,0,0]])
         print(state)
+        return state
+
+    @staticmethod
+    def theoric_rho_A_h(theta, phi, p):
+        N = 0.5
+        state = Matrix([[1/3, (p/3 + (1 - p*(-1j*sqrt(3) - 1))/12 + (1 - p*(1j*sqrt(3) + 1))/12), (p/3 - 1 - p*(-1j*sqrt(3) + 1)/12 + (1 - p*(-1j*sqrt(3) - 1))/6)],
+                    [(p/3 - 1 - p*(1j*sqrt(3) - 1)/12 - (1 - p*(1j*sqrt(3) + 1))/12), (p/3 + (1 - p)/6 - (1 - p*(2*1j*sqrt(3) - 1))/12), (p/3 + (1 - p*(-1j*sqrt(3) - 1))/12 - (1 - p*(1 - 1j*sqrt(3)))/12)],
+                    [(p/3 - (1 - p*(1j*sqrt(3) + 1))/12 + (1 - p*(1j*sqrt(3) - 1))/12), (p/3 - (1 - p*(1 - 1j*sqrt(3)))/12 - (1 - p)/6), (p/3 - (1 - p)/6 + (1 - p)/6)]])
+        # print(state)
         return state
 
     # def theoric_rho_A_gad(self, theta, phi, p):
@@ -167,9 +176,10 @@ class TheoricMaps():
 
     def plot_storaged(self, map_name):
         #path = f'../data/{map}/{map}-coherences.pkl'
-        path = f'data/{map_name}/ClassTestcasa.pkl'
+        #path = f'data/{map_name}/ClassTestcasa.pkl'
+        path = f'data/{map_name}/coerencia_L_e_R.pkl'
         rho_l = self.read_data(path)[0]#.detach().numpy()
-        plt.scatter(np.linspace(0,1,len(rho_l)),rho_l,label=map_name)
+        plt.scatter(np.linspace(0,1,len(rho_l)),rho_l,label=f'simulação')
 
         #print(data[1])
 
@@ -182,8 +192,9 @@ class TheoricMaps():
             rho_numpy = np.array(rho.tolist(), dtype=np.complex64)
             coh = self.coh_l1(rho_numpy)
             cohs.append(coh)
-        m = f'{map_name}, {str(theta)[0:4]}, {str(phi)[0:4]}'
-        plt.plot(list_p,cohs,label=m)
+        m = f'Estado inicial, theta =  {str(theta)[0:4]}, phi = {str(phi)[0:4]}'
+        plt.title(m)
+        plt.plot(list_p,cohs,label='teórico')
     
     def plot_all_theoric_space(self,map):
         li = np.linspace(0,2*np.pi, 5)
@@ -245,19 +256,19 @@ def main():
     
     #--------- para plotar todos os dados salvos com os valores teóricos:---------
     #x = np.linspace(-100,100,21)
-    list_p = np.linspace(0,1,5)
-    x = get_list_p_noMarkov(list_p)
+    x = np.linspace(0,1,21)
+    #x = get_list_p_noMarkov(list_p)
     #a.plot_storaged('ad')
-    a.plot_theoric(x,'ad',theta=pi/2,phi=0)
+    # a.plot_theoric(x,'ad',theta=pi/2,phi=0)
 
     #a.plot_storaged('pf')
-    a.plot_theoric(x,'pf',theta=pi/2,phi=0)
+    # a.plot_theoric(x,'pf',theta=pi/2,phi=0)
 
     #a.plot_storaged('bf')
-    a.plot_theoric(x,'bf',theta=pi/2,phi=0)
+    # a.plot_theoric(x,'bf',theta=pi/2,phi=0)
 
     #a.plot_storaged('bpf')
-    a.plot_theoric(x,'bpf',theta=pi/2,phi=0.0)
+    # a.plot_theoric(x,'bpf',theta=pi/2,phi=0.0)
 
     #a.plot_storaged('d')
     #a.plot_theoric(x,'d',theta=pi/2,phi=0)
@@ -266,7 +277,7 @@ def main():
     #a.plot_theoric(x,'l',theta=pi/2,phi=0)
     #a.plot_storaged('adg')
     #a.plot_theoric(x,'adg',theta=pi/2,phi=0)
-    #a.plot_theoric(x,'h',theta=pi/2,phi=0)
+    a.plot_theoric(x,'h',theta=pi/2,phi=0)
     plt.legend(loc=1)
     plt.show()
     #-----------------------------------------------------------------------------
