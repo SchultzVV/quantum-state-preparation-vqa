@@ -4,7 +4,7 @@ from numpy import linspace
 import matplotlib.pyplot as plt
 import numpy as np 
 import math
-#from ..theoric.tools import coh_l1, pTraceR_num, pTraceL_num
+from coherence import coh_l1
 import pickle
 import sys
 sys.path.append('runtime-qiskit')
@@ -29,12 +29,12 @@ class TheoricMaps():
         return data
     
     def map_choser(self,map_name):
-        list_of_maps = ['bpf','ad','bf','pf','pd','d','adg','l','h']#,'H','ad3']
+        list_of_maps = ['bpf','ad','bf','pf','pd','d','adg','l','hw']#,'H','ad3']
         list_of_functions = [self.theoric_rho_A_bpf, self.theoric_rho_A_ad,
                              self.theoric_rho_A_bf, self.theoric_rho_A_pf,
                              self.theoric_rho_A_pd, self.theoric_rho_A_d,
                              self.theoric_rho_A_adg, self.theoric_rho_A_l,
-                             self.theoric_rho_A_h
+                             self.theoric_rho_A_hw
                             ]
             #self.theoric_rho_A_H,
             #self.theoric_rho_A_ad3   ]
@@ -145,18 +145,18 @@ class TheoricMaps():
         return state
     
     @staticmethod
-    def theoric_rho_A_h2(theta, phi, p):
+    def theoric_rho_A_hw2(theta, phi, p):
         N = 0.5
         z1 = (1j*sqrt(3)-1)/2
         z2 = (-1j*sqrt(3)-1)/2
-        state = Matrix([[1/3,(1-p*z2)/3,(1-p*z1)/3,0
-                        ],[(1-p*z1)/3, 1/3, (1-p*z2)/3,0],[(1-p*z2)/3,(1-p*z1)/3,1/3,0],
+        state = Matrix([[1/3,(3*p-1)/6,(3*p-1)/6,0
+                        ],[(3*p-1)/6, 1/3, (3*p-1)/6,0],[(3*p-1)/6,(3*p-1)/6,1/3,0],
                         [0,0,0,0]])
         print(state)
         return state
 
     @staticmethod
-    def theoric_rho_A_h(theta, phi, p):
+    def theoric_rho_A_hw(theta, phi, p):
         N = 0.5
         state = Matrix([[1/3, (p/3 + (1 - p*(-1j*sqrt(3) - 1))/12 + (1 - p*(1j*sqrt(3) + 1))/12), (p/3 - 1 - p*(-1j*sqrt(3) + 1)/12 + (1 - p*(-1j*sqrt(3) - 1))/6)],
                     [(p/3 - 1 - p*(1j*sqrt(3) - 1)/12 - (1 - p*(1j*sqrt(3) + 1))/12), (p/3 + (1 - p)/6 - (1 - p*(2*1j*sqrt(3) - 1))/12), (p/3 + (1 - p*(-1j*sqrt(3) - 1))/12 - (1 - p*(1 - 1j*sqrt(3)))/12)],
@@ -164,15 +164,6 @@ class TheoricMaps():
         # print(state)
         return state
 
-    # def theoric_rho_A_gad(self, theta, phi, p):
-    #     gamma = 0.5
-    #     state = Matrix([[sqrt(p)*cos(theta/2),
-    #                      sqrt(p*gamma)*exp(-1j*phi)*sin(theta/2),
-    #                      sqrt((1-p)*(1-gamma))
-    #                     ((1-2*p)*exp(-1j*phi)*sin(phi)*cos(theta/2))],[
-    #                     ((1-2*p)*exp(1j*phi)*sin(phi)*cos(theta/2)),
-    #                     sin(theta/2)**2]])
-    #     return state
 
     def plot_storaged(self, map_name):
         #path = f'../data/{map}/{map}-coherences.pkl'
@@ -181,20 +172,28 @@ class TheoricMaps():
         rho_l = self.read_data(path)[0]#.detach().numpy()
         plt.scatter(np.linspace(0,1,len(rho_l)),rho_l,label=f'simulação')
 
-        #print(data[1])
 
     def plot_theoric(self, list_p, map_name, theta, phi):
         cohs = []
-        if map == 'l':
-            list_p = np.linspace(0,pi/2,len(list_p))
-        for pp in list_p:
-            rho = self.map_choser(map_name)(theta,phi,pp)
-            rho_numpy = np.array(rho.tolist(), dtype=np.complex64)
-            coh = self.coh_l1(rho_numpy)
-            cohs.append(coh)
-        m = f'Estado inicial, theta =  {str(theta)[0:4]}, phi = {str(phi)[0:4]}'
-        plt.title(m)
-        plt.plot(list_p,cohs,label='teórico')
+        if map_name == 'hw':
+            C_Psi0 = np.zeros(len(list_p))
+            C_Psi0 = []
+            for pp in list_p:
+                C_Psi0.append(abs(3*pp-1))
+            plt.plot(list_p, C_Psi0)
+            #plt.xlabel('p')#; plt.ylabel(r'$C(\psi_{0})$')
+
+        else:
+            if map_name == 'l':
+                list_p = np.linspace(0,pi/2,len(list_p))
+            for pp in list_p:
+                rho = self.map_choser(map_name)(theta,phi,pp)
+                rho_numpy = np.array(rho.tolist(), dtype=np.complex64)
+                coh = self.coh_l1(rho_numpy)
+                cohs.append(coh)
+            m = f'Estado inicial, theta =  {str(theta)[0:4]}, phi = {str(phi)[0:4]}'
+            plt.title(m)
+            plt.plot(list_p,cohs,label='teórico')
     
     def plot_all_theoric_space(self,map):
         li = np.linspace(0,2*np.pi, 5)
@@ -211,7 +210,7 @@ class TheoricMaps():
     
     def coherence(self, state):
         # Extrai os elementos do vetor de estado
-        a11, a12, a21, a22 = state.tolist()[0] 
+        a11, a12, a21, a22 = state.tolist()[0]
         # Calcula as normas L2 dos elementos
         norm_a1 = sqrt(abs(a11)**2 + abs(a21)**2)
         norm_a2 = sqrt(abs(a12)**2 + abs(a22)**2)
@@ -257,6 +256,7 @@ def main():
     #--------- para plotar todos os dados salvos com os valores teóricos:---------
     #x = np.linspace(-100,100,21)
     x = np.linspace(0,1,21)
+
     #x = get_list_p_noMarkov(list_p)
     #a.plot_storaged('ad')
     # a.plot_theoric(x,'ad',theta=pi/2,phi=0)
@@ -275,9 +275,14 @@ def main():
 
     #a.plot_storaged('l')
     #a.plot_theoric(x,'l',theta=pi/2,phi=0)
+
     #a.plot_storaged('adg')
     #a.plot_theoric(x,'adg',theta=pi/2,phi=0)
-    a.plot_theoric(x,'h',theta=pi/2,phi=0)
+    
+    a.plot_storaged('hw')
+    a.plot_theoric(x,'hw',theta=pi/2,phi=0)
+
+    #a.plot_theoric(x,'h',theta=pi/2,phi=0)
     plt.legend(loc=1)
     plt.show()
     #-----------------------------------------------------------------------------

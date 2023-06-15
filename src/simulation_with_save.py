@@ -11,11 +11,14 @@ import numpy as np
 from torch import tensor
 from numpy import pi
 import os
+from matplotlib.widgets import Slider, Button
 import sys
 sys.path.append('runtime-qiskit')
 sys.path.append('src')
 #sys.path.append('src')
 import pickle
+import ipywidgets as widgets
+from IPython.display import display
 #from src.pTrace import pTraceR_num, pTraceL_num
 #from src.coherence import coh_l1
 #from src.kraus_maps import QuantumChannels as QCH
@@ -188,7 +191,62 @@ class Simulate(object):
         plt.scatter(list_p,coerencias_L,label='Simulado')
         plt.xlabel(' p ')
         plt.ylabel(' Coerência ')
-        #plt.legend(loc=0)
+        plt.legend(loc=0)
+        plt.show()
+
+    def plots2(self, list_p, coerencias_L):
+        fig, ax = plt.subplots()
+        scatter = ax.scatter(list_p, coerencias_L, label='Simulado')
+        ax.set_xlabel('p')
+        ax.set_ylabel('Coerência')
+        ax.legend(loc=0)
+
+        # adjust the main plot to make room for the sliders
+        fig.subplots_adjust(left=0.25, bottom=0.25)
+
+        # Make a horizontal slider to control the frequency
+        axfreq = fig.add_axes([0.25, 0.1, 0.65, 0.03])
+        freq_slider = Slider(
+            ax=axfreq,
+            label='Frequency [Hz]',
+            valmin=0.1,
+            valmax=30,
+            valinit=1,
+        )
+
+        # Make a vertically oriented slider to control the amplitude
+        axamp = fig.add_axes([0.1, 0.25, 0.0225, 0.63])
+        amp_slider = Slider(
+            ax=axamp,
+            label="Amplitude",
+            valmin=0,
+            valmax=10,
+            valinit=1,
+            orientation="vertical"
+        )
+
+        def update(val):
+            # Update the scatter plot with new values based on sliders
+            amplitude = amp_slider.val
+            frequency = freq_slider.val
+            scatter.set_sizes(amplitude * coerencias_L)
+            scatter.set_offsets(np.column_stack((list_p, frequency * coerencias_L)))
+            fig.canvas.draw_idle()
+
+        # Register the update function with each slider
+        freq_slider.on_changed(update)
+        amp_slider.on_changed(update)
+
+        # Create a `matplotlib.widgets.Button` to reset the sliders to initial values
+        resetax = fig.add_axes([0.8, 0.025, 0.1, 0.04])
+        button = Button(resetax, 'Reset', hovercolor='0.975')
+
+        def reset(event):
+            freq_slider.reset()
+            amp_slider.reset()
+
+        button.on_clicked(reset)
+
         #plt.show()
 
     def run_calcs(self, save, theta, phi):#, gamma=None):
@@ -285,10 +343,11 @@ class Simulate(object):
         if save:
             with open(f'data/{self.map_name}/coerencia_L_e_R.pkl', 'wb') as f:
                 pickle.dump(mylist, f)
-        if self.map_name == 'hw':
-            pass
-        else:
-            self.plot_theoric_map(theta, phi)
+        #if self.map_name == 'hw':
+        #    pass
+        #else:
+        #    self.plot_theoric_map(theta, phi)
+        self.plot_theoric_map(theta, phi)
         self.plots(self.list_p, self.coerencias_L)
 
     
@@ -299,15 +358,15 @@ class Simulate(object):
 
 def main():
     #space = np.linspace(0, 2*pi, )
-    n_qubits = 2
+    n_qubits = 4
     list_p = []
-    list_p = np.linspace(0,1,5)
+    list_p = np.linspace(0,1,21)
     #pj = 
-    epochs = 1
-    step_to_start = 1
-    rho_AB = QCH.rho_AB_bpf
-    S = Simulate('bpf', n_qubits, list_p, epochs, step_to_start, rho_AB)
-    S.run_calcs_noMarkov(False, pi/2, 0)
+    epochs = 150
+    step_to_start = 100
+    rho_AB = QCH.rho_AB_hw
+    S = Simulate('hw', n_qubits, list_p, epochs, step_to_start, rho_AB)
+    S.run_calcs_noMarkov(True, pi/2, 0)
     #S.run_calcs(True, pi/2, 0)
     
     #phis = [0,pi,pi/1.5,pi/2,pi/3,pi/4,pi/5]
