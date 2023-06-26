@@ -20,13 +20,20 @@ def coh_hs(rho):
             hsc += (rho[j][k].real)**2.0 + (rho[j][k].imag)**2.0
     return 2*hsc
 
-def coh_l1(rho):  # normalized to [0,1]
-    d = rho.shape[0]
-    coh = 0.0
-    for j in range(0, d-1):
-        for k in range(j+1, d):
-            coh += math.sqrt((rho[j][k].real)**2.0 + (rho[j][k].imag)**2.0)
-    return 2.0*coh/(d-1)
+# def coh_l1(rho):  # normalized to [0,1]
+    # d = rho.shape[0]
+    # coh = 0.0
+    # for j in range(0, d-1):
+        # for k in range(j+1, d):
+            # coh += math.sqrt((rho[j][k].real)**2.0 + (rho[j][k].imag)**2.0)
+    # return 2.0*coh/(d-1)
+
+def coh_l1(rho):
+    d = rho.shape[0]; C = 0
+    for j in range(0,d-1):
+        for k in range(j+1,d):
+            C += abs(rho[j,k])
+    return 2*C
 
 #def coh_re(rho):
 #    d = rho.shape[0]

@@ -280,12 +280,12 @@ class Simulate(object):
             print(data)
             if save:
                 filename = f'data/{self.map_name}/paramsP_{p:.2f}theta_{theta:.2f}_phi{phi:.2f}.pkl'
-#                if os.path.isfile(filename):
-#                    print(f'O arquivo {filename} já existe. Não salve novamente.')
-#                    pass
-#                else:
-                with open(filename, 'wb') as f:
-                    pickle.dump(data, f)
+                if os.path.isfile(filename):
+                    print(f'O arquivo {filename} já existe. Não salve novamente.')
+                    pass
+                else:
+                    with open(filename, 'wb') as f:
+                        pickle.dump(data, f)
             rho = self.tomograph()
             #print(rho)
             self.coerencias_L, self.coerencias_R = self.results(rho, self.coerencias_R, coerencias_L)
@@ -297,6 +297,7 @@ class Simulate(object):
             pass
         else:
             self.plot_theoric_map(theta, phi)
+        
         self.plots(self.list_p, self.coerencias_L)
     
     def run_calcs_noMarkov(self, save, theta, phi):#, gamma=None):
@@ -304,8 +305,6 @@ class Simulate(object):
         coerencias_L = []
         pretrain = True
         count = 0
-        #self.n_qubits = 2
-        #depht = self.n_qubits + 1
         _, params, _, _ = self.start_things(self.depht)
         for p in self.list_p:
             print(f'{count} de {len(self.list_p)}')
@@ -314,9 +313,7 @@ class Simulate(object):
 
             # defina o estado a ser preparado abaixo
             #------------------------------------------------------------
-            #target_op = bpf(pi/2, 0, p)
             target_op = QCH.get_target_op(self.prepare_rho(theta, phi, p))
-            #target_op = self.prepare_target_op(theta, phi, p, gamma)
             #------------------------------------------------------------
 
             self.qc, self.qr, params, f = self.optmize(self.epochs, self.n_qubits, circuit, params, target_op, pretrain, self.step_to_start)
@@ -330,24 +327,24 @@ class Simulate(object):
             print(data)
             if save:
                 filename = f'data/{self.map_name}/paramsP_{p:.2f}theta_{theta:.2f}_phi{phi:.2f}.pkl'
-#                if os.path.isfile(filename):
-#                    print(f'O arquivo {filename} já existe. Não salve novamente.')
-#                    pass
-#                else:
-                with open(filename, 'wb') as f:
-                    pickle.dump(data, f)
+                if os.path.isfile(filename):
+                    print(f'O arquivo {filename} já existe. Não salve novamente.')
+                    pass
+                else:
+                    with open(filename, 'wb') as f:
+                        pickle.dump(data, f)
             rho = self.tomograph()
             #print(rho)
-            self.coerencias_L, self.coerencias_R = self.results(rho, self.coerencias_R, coerencias_L)
+            self.coerencias_L, self.coerencias_R = self.results(rho, self.coerencias_R, self.coerencias_L)
         mylist = [self.coerencias_L, self.coerencias_R]
         if save:
             with open(f'data/{self.map_name}/coerencia_L_e_R.pkl', 'wb') as f:
                 pickle.dump(mylist, f)
-        #if self.map_name == 'hw':
-        #    pass
-        #else:
-        #    self.plot_theoric_map(theta, phi)
-        self.plot_theoric_map(theta, phi)
+        if self.map_name == 'hw':
+           pass
+        else:
+           self.plot_theoric_map(theta, phi)
+        #self.plot_theoric_map(theta, phi)
         self.plots(self.list_p, self.coerencias_L)
 
     
@@ -357,13 +354,10 @@ class Simulate(object):
 
 
 def main():
-    #space = np.linspace(0, 2*pi, )
     n_qubits = 4
-    list_p = []
-    list_p = np.linspace(0,1,21)
-    #pj = 
-    epochs = 150
-    step_to_start = 100
+    list_p = np.linspace(0,1,3)
+    epochs = 1
+    step_to_start = 1
     rho_AB = QCH.rho_AB_hw
     S = Simulate('hw', n_qubits, list_p, epochs, step_to_start, rho_AB)
     S.run_calcs_noMarkov(True, pi/2, 0)
