@@ -203,6 +203,19 @@ class TheoricMaps():
                     [0, 0, 0, 0]])
         # print(state)
         return state
+    
+    def theoric_rho_A_hw2(self, theta, phi, p):
+        p0 = p
+        p1 = (1-p)/2
+        p2 = (1-p)/2
+        A = (p0+p1+p2)/3
+        # *1j*pi/3
+        state = Matrix([[A,(1/3)*(p0+p1*exp(-2*1j*pi/3)+p2*exp(-4*1j*pi/3)), (1/3)*(p0+p1*exp(-4*1j*pi/3)+p2*exp(8*1j*pi/3)), 0],
+                    [(1/3)*(p0+p1*exp(2*1j*pi/3)+p2*exp(4*1j*pi/3)), A, (1/3)*(p0+p1*exp(-2*1j*pi/3)+p2*exp(-4*1j*pi/3)), 0],
+                    [(1/3)*(p0+p1*exp(4*1j*pi/3)+p2*exp(8*1j*pi/3)), (1/3)*(p0+p1*exp(2*1j*pi/3)+p2*exp(4*1j*pi/3)), A, 0],
+                    [0, 0, 0, 0]])
+        # print(state)
+        return state
 
 
     def plot_storaged(self, map_name):
@@ -302,7 +315,7 @@ def main():
     #a.plot_all_theoric_space('ad')
     #a.plot_all_theoric_space('pf')
     #a.plot_all_theoric_space('bf')
-    a.plot_all_theoric_space('bpf')
+    #a.plot_all_theoric_space('bpf')
     #a.plot_all_theoric_space('d')
     #a.plot_all_theoric_space('adg')
     #a.plot_all_theoric_space('l')
@@ -312,7 +325,7 @@ def main():
     #--------- para plotar todos os dados salvos com os valores teóricos:---------
     #x = np.linspace(-100,100,21)
     #x = [0, pi/4, 3*pi/4, pi]
-    x = np.linspace(0,1,21)
+    x = np.linspace(0,1,210)
     #x = get_list_p_noMarkov(x)
     # a.plot_storaged('ad')
     # a.plot_theoric(x,'ad',theta=pi/2,phi=0)

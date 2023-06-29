@@ -119,7 +119,7 @@ class QuantumChannels(object):
                         ]])
         return state
 
-    def rho_AB_hw(theta, phi, p):#, gamma):
+    def rho_AB_hw2(theta, phi, p):#, gamma):
         N = 0.5
         state = Matrix([[sqrt(p/3), # |0000\rangle 
                         sqrt((1-p)/6), # |0001\rangle 
@@ -141,26 +141,50 @@ class QuantumChannels(object):
         return state
 
     # @staticmethod
-    # def rho_AB_hw(theta, phi, p):#, gamma):
-    #     N = 0.5
-    #     state = Matrix([[sqrt(p/3), # |0000\rangle 
-    #                      sqrt(p/3), # |0001\rangle 
-    #                      sqrt(p/3), # |0010\rangle 
-    #                      0, # |0011\rangle 
-    #                      sqrt(p/3), # |0100\rangle 
-    #                      sqrt(p/3)*(1j*sqrt(3)-1)/(2), # |0101\rangle 
-    #                      sqrt(p/3)*(1j*sqrt(3)+1)/(2), # |0110\rangle 
-    #                      0, # |0111\rangle 
-    #                      sqrt(p/3), # |1000\rangle 
-    #                      sqrt(p/3)*(1j*sqrt(3)+1)/(2), # |1001\rangle 
-    #                      sqrt(p/3)*(1j*sqrt(3)-1)/(2), # |1010\rangle 
-    #                      0, # |1011\rangle 
-    #                      0, # |1100\rangle 
-    #                      0, # |1101\rangle 
-    #                      0, # |1110\rangle 
-    #                      0, # |1111\rangle
-    #                     ]])
-    #     return state
+    def rho_AB_hw2(theta, phi, p):#, gamma):
+        N = 0.5
+        state = Matrix([[sqrt(p/3), # |0000\rangle 
+                         sqrt(p/3), # |0001\rangle 
+                         sqrt(p/3), # |0010\rangle 
+                         0, # |0011\rangle 
+                         sqrt(p/3), # |0100\rangle 
+                         sqrt(p/3)*(1j*sqrt(3)-1)/(2), # |0101\rangle 
+                         sqrt(p/3)*(1j*sqrt(3)+1)/(2), # |0110\rangle 
+                         0, # |0111\rangle 
+                         sqrt(p/3), # |1000\rangle 
+                         sqrt(p/3)*(1j*sqrt(3)+1)/(2), # |1001\rangle 
+                         sqrt(p/3)*(1j*sqrt(3)-1)/(2), # |1010\rangle 
+                         0, # |1011\rangle 
+                         0, # |1100\rangle 
+                         0, # |1101\rangle 
+                         0, # |1110\rangle 
+                         0, # |1111\rangle
+                        ]])
+        return state
+    
+    def rho_AB_hw(theta, phi, p):#, gamma):
+        N = 0.5
+        p0 = p
+        p1 = (1-p0)/2
+        p2 = (1-p0)/2
+        state = Matrix([[sqrt(p0/3), # |0000\rangle 
+                         sqrt(p1/3), # |0001\rangle 
+                         sqrt(p2/3), # |0010\rangle 
+                         0, # |0011\rangle 
+                         sqrt(p0/3), # |0100\rangle 
+                         sqrt(p1/3)*exp(2*1j*pi/3), # |0101\rangle 
+                         sqrt(p2/3)*exp(4*1j*pi/3), # |0110\rangle 
+                         0, # |0111\rangle 
+                         sqrt(p0/3), # |1000\rangle 
+                         sqrt(p1/3)*exp(4*1j*pi/3), # |1001\rangle 
+                         sqrt(p2/3)*exp(8*1j*pi/3), # |1010\rangle 
+                         0, # |1011\rangle 
+                         0, # |1100\rangle 
+                         0, # |1101\rangle 
+                         0, # |1110\rangle 
+                         0, # |1111\rangle
+                        ]])
+        return state
 
     def show_eq(rho, theta=None, phi=None, gamma=None, p=None):
         if theta == None or phi == None or gamma == None or p == None:

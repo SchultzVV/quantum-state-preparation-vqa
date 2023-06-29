@@ -340,11 +340,11 @@ class Simulate(object):
         if save:
             with open(f'data/{self.map_name}/coerencia_L_e_R.pkl', 'wb') as f:
                 pickle.dump(mylist, f)
-        if self.map_name == 'hw':
-           pass
-        else:
-           self.plot_theoric_map(theta, phi)
-        #self.plot_theoric_map(theta, phi)
+        # if self.map_name == 'hw':
+        #    pass
+        # else:
+        #    self.plot_theoric_map(theta, phi)
+        self.plot_theoric_map(theta, phi)
         self.plots(self.list_p, self.coerencias_L)
 
     
@@ -355,9 +355,9 @@ class Simulate(object):
 
 def main():
     n_qubits = 4
-    list_p = np.linspace(0,1,3)
-    epochs = 1
-    step_to_start = 1
+    list_p = np.linspace(0,1,6)
+    epochs = 120
+    step_to_start = 100
     rho_AB = QCH.rho_AB_hw
     S = Simulate('hw', n_qubits, list_p, epochs, step_to_start, rho_AB)
     S.run_calcs_noMarkov(True, pi/2, 0)
