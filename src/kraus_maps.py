@@ -161,7 +161,7 @@ class QuantumChannels(object):
                          0, # |1111\rangle
                         ]])
         return state
-    
+    @staticmethod
     def rho_AB_hw(theta, phi, p):#, gamma):
         N = 0.5
         p0 = p
@@ -216,7 +216,7 @@ def main():
     p = Symbol('p',real=True, positive=True)
     from kraus_maps import QuantumChannels
     a = QuantumChannels()
-    print_latex(a.rho_AB_d(theta,phi,p))
+    print_latex(simplify(a.rho_AB_hw(theta,phi,p)))
 
 if __name__ == "__main__":
     main()

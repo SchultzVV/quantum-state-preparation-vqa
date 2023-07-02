@@ -254,6 +254,9 @@ class TheoricMaps():
         fancy_name = self.name_changer(map_name)
         psi = fr'$|\psi({th},{fi})\rangle$.'
         m = r"Estado inicial $|\psi(\theta,\phi)\rangle =$ " + psi
+        if map_name == 'hw':
+            #psi = fr'$\frac(|0\rangle+|1\rangle+|2\rangle\psi({th},{fi})\rangle)$.'
+            m = r"Estado inicial $|\psi\rangle = \frac{1}{\sqrt{3}}(|0\rangle+|1\rangle+|2\rangle)$ "
         plt.title(m,usetex=True)
         plt.suptitle(fancy_name)
         if map_name == 'l':
@@ -325,7 +328,7 @@ def main():
     #--------- para plotar todos os dados salvos com os valores teóricos:---------
     #x = np.linspace(-100,100,21)
     #x = [0, pi/4, 3*pi/4, pi]
-    x = np.linspace(0,1,210)
+    x = np.linspace(0,1,19)
     #x = get_list_p_noMarkov(x)
     # a.plot_storaged('ad')
     # a.plot_theoric(x,'ad',theta=pi/2,phi=0)
@@ -347,10 +350,10 @@ def main():
     # plt.legend(loc=1)
     # plt.show()
 # 
-    # a.plot_storaged('d')
-    # a.plot_theoric(x,'d',theta=pi/2,phi=0)
-    # plt.legend(loc=1)
-    # plt.show()
+    a.plot_storaged('d')
+    a.plot_theoric(x,'d',theta=pi/2,phi=0)
+    plt.legend(loc=1)
+    plt.show()
 # 
     # a.plot_storaged('l')
     # a.plot_theoric(x,'l',theta=pi/2,phi=0)
@@ -362,8 +365,8 @@ def main():
     # plt.legend(loc=1)
     # plt.show()
 
-    a.plot_storaged('hw')
-    a.plot_theoric(x,'hw',theta=pi/2,phi=0)
+    #a.plot_storaged('hw')
+    #a.plot_theoric(x,'hw',theta=pi/2,phi=0)
 
     #a.plot_theoric(x,'h',theta=pi/2,phi=0)
     plt.legend(loc=1)

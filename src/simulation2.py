@@ -20,10 +20,10 @@ import pickle
 import ipywidgets as widgets
 from IPython.display import display
 #from src.pTrace import pTraceR_num, pTraceL_num
-#from src.coherence import coh_l1
 #from src.kraus_maps import QuantumChannels as QCH
 #from src.theoric_channels import TheoricMaps as tm
 
+from src.coherence import coh_l1
 from pTrace import pTraceR_num, pTraceL_num
 from coherence import coh_l1
 from kraus_maps import QuantumChannels as QCH
@@ -32,7 +32,7 @@ from theoric_channels import TheoricMaps as tm
 
 class Simulate(object):
 
-    def __init__(self, map_name, n_qubits, d_rho_A, list_p, epochs, step_to_start, rho_AB):
+    def __init__(self, map_name, n_qubits, list_p, epochs, step_to_start, rho_AB):
         self.list_p = list_p
         self.epochs = epochs
         self.step_to_start = step_to_start
@@ -41,7 +41,6 @@ class Simulate(object):
         self.map_name = map_name
         self.coerencias_L = []
         self.n_qubits = n_qubits
-        self.d_rho_A = d_rho_A
         self.depht = n_qubits +1
    
     def get_device(self):
@@ -169,9 +168,9 @@ class Simulate(object):
         return qc, qr, best_params, f
 
     def tomograph(self):
-        if self.d_rho_A == 4:
+        if self.n_qubits == 4:
             qstc = state_tomography_circuits(self.qc, [self.qr[0],self.qr[1],self.qr[2],self.qr[3]])
-        elif self.d_rho_A == 2:
+        elif self.n_qubits == 2:
             qstc = state_tomography_circuits(self.qc, [self.qr[0],self.qr[1]])
         nshots = 8192
         job = execute(qstc, Aer.get_backend('qasm_simulator'), shots=nshots)
@@ -180,8 +179,8 @@ class Simulate(object):
         return rho
 
     def results(self, rho, coerencias_R, coerencias_L):
-        rho_R = pTraceR_num(self.d_rho_A, self.d_rho_A, rho)
-        rho_L = pTraceL_num(self.d_rho_A, self.d_rho_A, rho)
+        rho_R = pTraceR_num(self.n_qubits,self.n_qubits,rho)
+        rho_L = pTraceL_num(self.n_qubits,self.n_qubits,rho)
         coh_R = coh_l1(rho_R)
         coh_L = coh_l1(rho_L)
         coerencias_R.append(coh_R)
@@ -189,15 +188,6 @@ class Simulate(object):
 
         return coerencias_L, coerencias_R
     
-    def results_hw(self, rho, coerencias_R, coerencias_L):
-        rho_R = pTraceR_num(4,4,rho)
-        rho_L = pTraceL_num(4,4,rho)
-        coh_R = coh_l1(rho_R)
-        coh_L = coh_l1(rho_L)
-        coerencias_R.append(coh_R)
-        coerencias_L.append(coh_L)
-
-        return coerencias_L, coerencias_R
 
     def plots(self, list_p, coerencias_L):
         print(list_p)
@@ -208,114 +198,7 @@ class Simulate(object):
         plt.legend(loc=0)
         plt.show()
 
-    def plots2(self, list_p, coerencias_L):
-        fig, ax = plt.subplots()
-        scatter = ax.scatter(list_p, coerencias_L, label='Simulado')
-        ax.set_xlabel('p')
-        ax.set_ylabel('Coerência')
-        ax.legend(loc=0)
 
-        # adjust the main plot to make room for the sliders
-        fig.subplots_adjust(left=0.25, bottom=0.25)
-
-        # Make a horizontal slider to control the frequency
-        axfreq = fig.add_axes([0.25, 0.1, 0.65, 0.03])
-        freq_slider = Slider(
-            ax=axfreq,
-            label='Frequency [Hz]',
-            valmin=0.1,
-            valmax=30,
-            valinit=1,
-        )
-
-        # Make a vertically oriented slider to control the amplitude
-        axamp = fig.add_axes([0.1, 0.25, 0.0225, 0.63])
-        amp_slider = Slider(
-            ax=axamp,
-            label="Amplitude",
-            valmin=0,
-            valmax=10,
-            valinit=1,
-            orientation="vertical"
-        )
-
-        def update(val):
-            # Update the scatter plot with new values based on sliders
-            amplitude = amp_slider.val
-            frequency = freq_slider.val
-            scatter.set_sizes(amplitude * coerencias_L)
-            scatter.set_offsets(np.column_stack((list_p, frequency * coerencias_L)))
-            fig.canvas.draw_idle()
-
-        # Register the update function with each slider
-        freq_slider.on_changed(update)
-        amp_slider.on_changed(update)
-
-        # Create a `matplotlib.widgets.Button` to reset the sliders to initial values
-        resetax = fig.add_axes([0.8, 0.025, 0.1, 0.04])
-        button = Button(resetax, 'Reset', hovercolor='0.975')
-
-        def reset(event):
-            freq_slider.reset()
-            amp_slider.reset()
-
-        button.on_clicked(reset)
-
-        #plt.show()
-
-    def run_calcs(self, save, theta, phi):#, gamma=None):
-        #coerencias_R = []
-        coerencias_L = []
-        pretrain = True
-        count = 0
-        #self.n_qubits = 2
-        #depht = self.n_qubits + 1
-        _, params, _, _ = self.start_things(self.depht)
-        for p in self.list_p:
-            print(f'{count} de {len(self.list_p)}')
-            count += 1
-            circuit, _ = self.general_vqacircuit_penny(params, self.n_qubits, self.depht)
-
-            # defina o estado a ser preparado abaixo
-            #------------------------------------------------------------
-            #target_op = bpf(pi/2, 0, p)
-            target_op = QCH.get_target_op(self.prepare_rho(theta, phi, p))
-            #target_op = self.prepare_target_op(theta, phi, p, gamma)
-            #------------------------------------------------------------
-
-            self.qc, self.qr, params, f = self.optmize(self.epochs, self.n_qubits, circuit, params, target_op, pretrain, self.step_to_start)
-            pretrain = False
-            data = {'map_name': self.map_name,
-                    'params': params,
-                    'epochs': self.epochs,
-                    'theta': theta,
-                    'phi': phi,
-                    'p': p}
-            print(data)
-            if save:
-                filename = f'data/{self.map_name}/paramsP_{p:.2f}theta_{theta:.2f}_phi{phi:.2f}.pkl'
-                if os.path.isfile(filename):
-                    print(f'O arquivo {filename} já existe. Não salve novamente.')
-                    pass
-                else:
-                    with open(filename, 'wb') as f:
-                        pickle.dump(data, f)
-            rho = self.tomograph()
-            #print(rho)
-            if self.map_name == 'hw':
-                self.coerencias_L, self.coerencias_R = self.results_hw(rho, self.coerencias_R, coerencias_L)
-            else:
-                self.coerencias_L, self.coerencias_R = self.results(rho, self.coerencias_R, coerencias_L)
-        mylist = [self.coerencias_L, self.coerencias_R]
-        if save:
-            with open(f'data/{self.map_name}/coerencia_L_e_R.pkl', 'wb') as f:
-                pickle.dump(mylist, f)
-        if self.map_name == 'hw':
-            pass
-        else:
-            self.plot_theoric_map(theta, phi)
-        
-        self.plots(self.list_p, self.coerencias_L)
     
     def run_calcs_noMarkov(self, save, theta, phi):#, gamma=None):
         #coerencias_R = []
@@ -352,7 +235,7 @@ class Simulate(object):
                         pickle.dump(data, f)
             rho = self.tomograph()
             #print(rho)
-            self.coerencias_L, self.coerencias_R = self.results(rho, self.coerencias_R, coerencias_L)
+            self.coerencias_L, self.coerencias_R = self.results_hw(rho, self.coerencias_R, coerencias_L)
         mylist = [self.coerencias_L, self.coerencias_R]
         if save:
             with open(f'data/{self.map_name}/coerencia_L_e_R.pkl', 'wb') as f:
@@ -371,13 +254,12 @@ class Simulate(object):
 
 
 def main():
-    n_qubits = 3
-    d_rho_A = 2
+    n_qubits = 4
     list_p = np.linspace(0,1,21)
     epochs = 120
     step_to_start = 80
-    rho_AB = QCH.rho_AB_d
-    S = Simulate('d', n_qubits, d_rho_A, list_p, epochs, step_to_start, rho_AB)
+    rho_AB = QCH.rho_AB_hw
+    S = Simulate('hw', n_qubits, list_p, epochs, step_to_start, rho_AB)
     S.run_calcs_noMarkov(True, pi/2, 0)
     #S.run_calcs(True, pi/2, 0)
     
