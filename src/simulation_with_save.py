@@ -27,8 +27,9 @@ from IPython.display import display
 from pTrace import pTraceR_num, pTraceL_num
 from coherence import coh_l1
 from kraus_maps import QuantumChannels as QCH
+from kraus_maps import get_list_p_noMarkov
 from theoric_channels import TheoricMaps as tm
-
+from numpy import cos, sin, sqrt, pi, exp
 
 class Simulate(object):
 
@@ -48,6 +49,18 @@ class Simulate(object):
         device = qml.device('qiskit.aer', wires=self.n_qubits, backend='qasm_simulator')
         return device
     
+    # def get_list_p_noMarkov(self):
+    #     lamb = 0.05
+    #     gamma_0 = 2.8
+    #     list_p_noMarkov = []
+    #     def non_markov_list_p(lamb,gamma_0,t):
+    #         d = sqrt(2*gamma_0*lamb-lamb**2)
+    #         result = exp(-lamb*t)*(cos(d*t/2)+(lamb/d)*sin(d*t/2))**2
+    #         return result
+    #     for p in self.list_p:
+    #         list_p_noMarkov.append(non_markov_list_p(lamb,gamma_0,p))
+    #     return list_p_noMarkov
+
     def prepare_rho(self, theta, phi, p, gamma=None):
         if gamma == None:
             rho = self.rho_AB(theta, phi, p)
@@ -371,14 +384,22 @@ class Simulate(object):
 
 
 def main():
-    n_qubits = 3
+    n_qubits = 2
     d_rho_A = 2
-    list_p = np.linspace(0,1,21)
-    epochs = 120
-    step_to_start = 80
-    rho_AB = QCH.rho_AB_d
-    S = Simulate('d', n_qubits, d_rho_A, list_p, epochs, step_to_start, rho_AB)
-    S.run_calcs_noMarkov(True, pi/2, 0)
+    list_p = np.linspace(0,30,4)
+    list_p = get_list_p_noMarkov(list_p)
+    print(list_p)
+    print(type(list_p))
+
+
+    epochs = 1
+    step_to_start = 1
+    rho_AB = QCH.rho_AB_ad
+    S = Simulate('ad', n_qubits, d_rho_A, list_p, epochs, step_to_start, rho_AB)
+    #list_p = S.get_list_p_noMarkov()
+    # print(list_p)
+    # print(type(list_p))
+    S.run_calcs_noMarkov(False, pi/2, 0)
     #S.run_calcs(True, pi/2, 0)
     
     #phis = [0,pi,pi/1.5,pi/2,pi/3,pi/4,pi/5]

@@ -8,6 +8,18 @@ from numpy import linspace
 #import torch
 from torch import tensor
 
+def get_list_p_noMarkov(list_p):
+        lamb = 0.05
+        gamma_0 = 2.8
+        list_p_noMarkov = []
+        def non_markov_list_p(lamb,gamma_0,t):
+            d = sqrt(2*gamma_0*lamb-lamb**2)
+            result = exp(-lamb*t)*(cos(d*t/2)+(lamb/d)*sin(d*t/2))**2
+            return result
+        for p in list_p:
+            list_p_noMarkov.append(non_markov_list_p(lamb,gamma_0,p))
+        return list_p_noMarkov
+
 class QuantumChannels(object):
     def __init__(self):
         theta = Symbol('theta',real=True)

@@ -330,43 +330,43 @@ def main():
     #x = [0, pi/4, 3*pi/4, pi]
     x = np.linspace(0,1,19)
     #x = get_list_p_noMarkov(x)
-    # a.plot_storaged('ad')
-    # a.plot_theoric(x,'ad',theta=pi/2,phi=0)
-    # plt.legend(loc=1)
-    # plt.show()
-# 
-    # a.plot_storaged('pf')
-    # a.plot_theoric(x,'pf',theta=pi/2,phi=0)
-    # plt.legend(loc=1)
-    # plt.show()
-# 
-    # a.plot_storaged('bf')
-    # a.plot_theoric(x,'bf',theta=pi/2,phi=pi/2)
-    # plt.legend(loc=1)
-    # plt.show()
-# 
-    # a.plot_storaged('bpf')
-    # a.plot_theoric(x,'bpf',theta=pi/2,phi=0.0)
-    # plt.legend(loc=1)
-    # plt.show()
-# 
+    a.plot_storaged('ad')
+    a.plot_theoric(x,'ad',theta=pi/2,phi=0)
+    plt.legend(loc=1)
+    plt.show()
+
+    a.plot_storaged('pf')
+    a.plot_theoric(x,'pf',theta=pi/2,phi=0)
+    plt.legend(loc=1)
+    plt.show()
+
+    a.plot_storaged('bf')
+    a.plot_theoric(x,'bf',theta=pi/2,phi=pi/2)
+    plt.legend(loc=1)
+    plt.show()
+
+    a.plot_storaged('bpf')
+    a.plot_theoric(x,'bpf',theta=pi/2,phi=0.0)
+    plt.legend(loc=1)
+    plt.show()
+
     a.plot_storaged('d')
     a.plot_theoric(x,'d',theta=pi/2,phi=0)
     plt.legend(loc=1)
     plt.show()
-# 
-    # a.plot_storaged('l')
-    # a.plot_theoric(x,'l',theta=pi/2,phi=0)
-    # plt.legend(loc=1)
-    # plt.show()
-# 
-    # a.plot_storaged('adg')
-    # a.plot_theoric(x,'adg',theta=pi/2,phi=0)
-    # plt.legend(loc=1)
-    # plt.show()
 
-    #a.plot_storaged('hw')
-    #a.plot_theoric(x,'hw',theta=pi/2,phi=0)
+    a.plot_storaged('l')
+    a.plot_theoric(x,'l',theta=pi/2,phi=0)
+    plt.legend(loc=1)
+    plt.show()
+
+    a.plot_storaged('adg')
+    a.plot_theoric(x,'adg',theta=pi/2,phi=0)
+    plt.legend(loc=1)
+    plt.show()
+# 
+    a.plot_storaged('hw')
+    a.plot_theoric(x,'hw',theta=pi/2,phi=0)
 
     #a.plot_theoric(x,'h',theta=pi/2,phi=0)
     plt.legend(loc=1)
