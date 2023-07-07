@@ -1,46 +1,57 @@
 from src.simulation_with_save import *
 from numpy import cos, sin, exp, linspace, meshgrid, array, zeros, shape
-def non_markov_t(lamb,t):
+
+def non_markov_t_Bellomo(lamb,t):
+    gamma_0 = 2.8
+    d = sqrt(2*gamma_0*lamb-lamb**2)
+    result = exp(-lamb*t)*(cos(d*t/2)+(lamb/d)*sin(d*t/2))**2
+    return result
+
+def non_markov_t_Ana(lamb,t):
     result = 1 - exp(-lamb*t)*(cos(t/2)+lamb*sin(t/2))
     return result
+
 def get_t_noMarkov2(lamb, t):
     #lamb = 5
     #gamma_0 = 2.8
     t_noMarkov = []
     for p in t:
-        t_noMarkov.append(non_markov_t(lamb,p))
+        t_noMarkov.append(non_markov_t_Ana(lamb,p))
     return t_noMarkov
-size = 20
 
-t = linspace(0,60,size)
-lamb_list = linspace(0,0.08,size)
-z = zeros((size,size))
-#z = non_markov_t(lamb_list, t)
-j = 0
-k = 0
-for p in t:
-    for lamb in lamb_list:
-        z[j,k] = non_markov_t(lamb,p)
-        j+=1
-    k+=1
-    j=0
-#        z.append(non_markov_t(lamb,p))
-#z = array(z)
-t, lamb_list = meshgrid(t,lamb_list)
-    
-print(shape(t))
-print(shape(lamb_list))
-print(shape(z))
+def plot_space(mode):
+    size = 200
+    t = linspace(0,120,size)
+    lamb_list = linspace(0,0.08,size)
+    z = zeros((size,size));    j = 0;    k = 0
+    for p in t:
+        for lamb in lamb_list:
+            if mode == 'Ana':
+                z[j,k] = non_markov_t_Ana(lamb,p)
+            if mode == 'Bellomo':
+                z[j,k] = non_markov_t_Bellomo(lamb,p)
+            j+=1
+        k+=1
+        j=0
+    t, lamb_list = meshgrid(t,lamb_list)
 
-import matplotlib.pyplot as plt
-import pylab
-from mpl_toolkits.mplot3d import Axes3D
-fig = plt.figure()
-#ax = fig.gca(projection='3d')
-ax = fig.add_subplot(projection='3d')
+    print(shape(t))
+    print(shape(lamb_list))
+    print(shape(z))
 
-surf = ax.plot_surface(t, lamb_list,z)
-ax.set_xlabel('t')
-ax.set_ylabel('lambda')
-ax.set_zlabel('p(t,lambda)')
-plt.show()
+    import matplotlib.pyplot as plt
+    #import pylab
+    #from mpl_toolkits.mplot3d import Axes3D
+    fig = plt.figure()
+    #ax = fig.gca(projection='3d')
+    ax = fig.add_subplot(projection='3d')
+
+    surf = ax.plot_surface(t, lamb_list,z)
+    ax.set_title(f'{mode}')
+    ax.set_xlabel('t')
+    ax.set_ylabel('lambda')
+    ax.set_zlabel('p(t,lambda)')
+    plt.show()
+
+plot_space('Ana')
+plot_space('Bellomo')

@@ -17,7 +17,7 @@ def get_list_p_noMarkov(list_p, type):
                 d = sqrt(2*gamma_0*lamb-lamb**2)
                 result = exp(-lamb*t)*(cos(d*t/2)+(lamb/d)*sin(d*t/2))**2
                 return result
-        if type == 'Costa':
+        if type == 'Ana':
             def non_markov_list_p(lamb,gamma_0,t):
                 result = 1-exp(-lamb*t)*(cos(t/2)+(lamb)*sin(t/2))
                 return result

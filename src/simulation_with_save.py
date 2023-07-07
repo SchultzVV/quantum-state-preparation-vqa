@@ -48,18 +48,7 @@ class Simulate(object):
     def get_device(self):
         device = qml.device('qiskit.aer', wires=self.n_qubits, backend='qasm_simulator')
         return device
-    
-    # def get_list_p_noMarkov(self):
-    #     lamb = 0.05
-    #     gamma_0 = 2.8
-    #     list_p_noMarkov = []
-    #     def non_markov_list_p(lamb,gamma_0,t):
-    #         d = sqrt(2*gamma_0*lamb-lamb**2)
-    #         result = exp(-lamb*t)*(cos(d*t/2)+(lamb/d)*sin(d*t/2))**2
-    #         return result
-    #     for p in self.list_p:
-    #         list_p_noMarkov.append(non_markov_list_p(lamb,gamma_0,p))
-    #     return list_p_noMarkov
+
 
     def prepare_rho(self, theta, phi, p, gamma=None):
         if gamma == None:
@@ -219,6 +208,17 @@ class Simulate(object):
         plt.xlabel(' p ')
         plt.ylabel(' Coerência ')
         plt.legend(loc=0)
+        plt.savefig(f'figures/automatic/{self.map_name}.png')
+        plt.show()
+
+    def plots_markov(self, list_p, coerencias_L):
+        print(list_p)
+        print(len(coerencias_L))
+        plt.scatter(list_p,coerencias_L,label='Simulado')
+        plt.xlabel(' p ')
+        plt.ylabel(' Coerência ')
+        plt.legend(loc=0)
+        plt.savefig(f'noMarkov/figures/automatic/{self.map_name}.png')
         plt.show()
 
     def plots2(self, list_p, coerencias_L):
@@ -276,61 +276,8 @@ class Simulate(object):
 
         #plt.show()
 
+    #def run_calcs(self, save, theta, phi):#, gamma=None):
     def run_calcs(self, save, theta, phi):#, gamma=None):
-        #coerencias_R = []
-        coerencias_L = []
-        pretrain = True
-        count = 0
-        #self.n_qubits = 2
-        #depht = self.n_qubits + 1
-        _, params, _, _ = self.start_things(self.depht)
-        for p in self.list_p:
-            print(f'{count} de {len(self.list_p)}')
-            count += 1
-            circuit, _ = self.general_vqacircuit_penny(params, self.n_qubits, self.depht)
-
-            # defina o estado a ser preparado abaixo
-            #------------------------------------------------------------
-            #target_op = bpf(pi/2, 0, p)
-            target_op = QCH.get_target_op(self.prepare_rho(theta, phi, p))
-            #target_op = self.prepare_target_op(theta, phi, p, gamma)
-            #------------------------------------------------------------
-
-            self.qc, self.qr, params, f = self.optmize(self.epochs, self.n_qubits, circuit, params, target_op, pretrain, self.step_to_start)
-            pretrain = False
-            data = {'map_name': self.map_name,
-                    'params': params,
-                    'epochs': self.epochs,
-                    'theta': theta,
-                    'phi': phi,
-                    'p': p}
-            print(data)
-            if save:
-                filename = f'data/{self.map_name}/paramsP_{p:.2f}theta_{theta:.2f}_phi{phi:.2f}.pkl'
-                if os.path.isfile(filename):
-                    print(f'O arquivo {filename} já existe. Não salve novamente.')
-                    pass
-                else:
-                    with open(filename, 'wb') as f:
-                        pickle.dump(data, f)
-            rho = self.tomograph()
-            #print(rho)
-            if self.map_name == 'hw':
-                self.coerencias_L, self.coerencias_R = self.results_hw(rho, self.coerencias_R, coerencias_L)
-            else:
-                self.coerencias_L, self.coerencias_R = self.results(rho, self.coerencias_R, coerencias_L)
-        mylist = [self.coerencias_L, self.coerencias_R]
-        if save:
-            with open(f'data/{self.map_name}/coerencia_L_e_R.pkl', 'wb') as f:
-                pickle.dump(mylist, f)
-        if self.map_name == 'hw':
-            pass
-        else:
-            self.plot_theoric_map(theta, phi)
-        
-        self.plots(self.list_p, self.coerencias_L)
-    
-    def run_calcs_noMarkov(self, save, theta, phi):#, gamma=None):
         #coerencias_R = []
         coerencias_L = []
         pretrain = True
@@ -376,6 +323,53 @@ class Simulate(object):
         #    self.plot_theoric_map(theta, phi)
         self.plot_theoric_map(theta, phi)
         self.plots(self.list_p, self.coerencias_L)
+    
+    def run_calcs_noMarkov(self, save, theta, phi):#, gamma=None):
+        #coerencias_R = []
+        coerencias_L = []
+        self.list_p = get_list_p_noMarkov(self.list_p,'Ana')
+        print('list_t = ', self.list_p)
+        #self.list_p = [i/max(self.list_p) for i in self.list_p]
+        pretrain = True
+        count = 0
+        _, params, _, _ = self.start_things(self.depht)
+        
+        for p in self.list_p:
+            print(f'{count} de {len(self.list_p)}')
+            count += 1
+            circuit, _ = self.general_vqacircuit_penny(params, self.n_qubits, self.depht)
+
+            # defina o estado a ser preparado abaixo
+            #------------------------------------------------------------
+            target_op = QCH.get_target_op(self.prepare_rho(theta, phi, p))
+            #------------------------------------------------------------
+
+            self.qc, self.qr, params, f = self.optmize(self.epochs, self.n_qubits, circuit, params, target_op, pretrain, self.step_to_start)
+            pretrain = False
+            data = {'map_name': self.map_name,
+                    'params': params,
+                    'epochs': self.epochs,
+                    'theta': theta,
+                    'phi': phi,
+                    'p': p}
+            print(data)
+            if save:
+                filename = f'noMarkov/data/{self.map_name}/paramsP_{p:.2f}theta_{theta:.2f}_phi{phi:.2f}.pkl'
+                if os.path.isfile(filename):
+                    print(f'O arquivo {filename} já existe. Não salve novamente.')
+                    pass
+                else:
+                    with open(filename, 'wb') as f:
+                        pickle.dump(data, f)
+            rho = self.tomograph()
+            #print(rho)
+            self.coerencias_L, self.coerencias_R = self.results(rho, self.coerencias_R, coerencias_L)
+        mylist = [self.coerencias_L, self.coerencias_R]
+        if save:
+            with open(f'noMarkov/data/{self.map_name}/coerencia_L_e_R.pkl', 'wb') as f:
+                pickle.dump(mylist, f)
+        #self.plot_theoric_map(theta, phi)
+        self.plots_markov(self.list_p, self.coerencias_L)
 
     
     def run_sequential_bf(self, phis):
@@ -386,14 +380,7 @@ class Simulate(object):
 def main():
     n_qubits = 2
     d_rho_A = 2
-    list_p = np.linspace(0,100,21)
-    list_p = get_list_p_noMarkov(list_p,'Costa')
-    list_p = [i/max(list_p) for i in list_p]
-    print('Costa = ', list_p)
-    print(type(list_p))
-    s.exit()
-
-
+    list_p = np.linspace(0.001,60,3)
     epochs = 1
     step_to_start = 1
     rho_AB = QCH.rho_AB_ad
@@ -401,7 +388,7 @@ def main():
     #list_p = S.get_list_p_noMarkov()
     # print(list_p)
     # print(type(list_p))
-    S.run_calcs_noMarkov(False, pi/2, 0)
+    S.run_calcs_noMarkov(True, pi/2, 0)
     #S.run_calcs(True, pi/2, 0)
     
     #phis = [0,pi,pi/1.5,pi/2,pi/3,pi/4,pi/5]
