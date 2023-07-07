@@ -220,16 +220,20 @@ class TheoricMaps():
         return state
 
 
-    def plot_storaged(self, map_name):
+    def plot_storaged(self, map_name,markovianity):
         #path = f'../data/{map}/{map}-coherences.pkl'
-        try:
-            path = f'data/{map_name}/coerencia_L_e_R.pkl'
-            rho_l = self.read_data(path)[0]#.detach().numpy()
-        except:
+        if markovianity:
+            try:
+                path = f'data/{map_name}/coerencia_L_e_R.pkl'
+                rho_l = self.read_data(path)[0]#.detach().numpy()
+            except:
 
-            path = f'data/{map_name}/ClassTestcasa.pkl'
+                path = f'data/{map_name}/ClassTestcasa.pkl'
+                rho_l = self.read_data(path)[0]#.detach().numpy()
+        else:
+            path = f'noMarkov/data/{map_name}/coerencia_L_e_R.pkl'
             rho_l = self.read_data(path)[0]#.detach().numpy()
-        plt.scatter(np.linspace(0,1,len(rho_l)),rho_l,label=f'simulação')
+        plt.plot(np.linspace(0,1,len(rho_l)),rho_l,label=f'{map_name}')
 
 
     def plot_theoric(self, list_p, map_name, theta, phi):
@@ -331,49 +335,47 @@ def main():
     #x = np.linspace(-100,100,21)
     #x = [0, pi/4, 3*pi/4, pi]
     x = np.linspace(0,100,21)
-    x = get_list_p_noMarkov(x,'Costa')
+    x = get_list_p_noMarkov(x,'Ana')
     # x = [i/max(x) for i in x]
     print(x)
-    #x = get_list_p_noMarkov(x)
-    #a.plot_storaged('ad')
-    a.plot_theoric(x,'ad',theta=pi/2,phi=0)
+
+    a.plot_storaged('ad',False)
+    #a.plot_theoric(x,'ad',theta=pi/2,phi=0)
     plt.legend(loc=1)
     plt.show()
 
-    #a.plot_storaged('pf')
-    a.plot_theoric(x,'pf',theta=pi/2,phi=0)
+    a.plot_storaged('pf',False)
+    #a.plot_theoric(x,'pf',theta=pi/2,phi=0)
     plt.legend(loc=1)
     plt.show()
 
-    #a.plot_storaged('bf')
-    a.plot_theoric(x,'bf',theta=pi/2,phi=pi/2)
+    a.plot_storaged('bf',False)
+    a.plot_theoric(x,'bf',theta=pi/2,phi=0)
     plt.legend(loc=1)
     plt.show()
 
-    #a.plot_storaged('bpf')
+    a.plot_storaged('bpf',False)
     a.plot_theoric(x,'bpf',theta=pi/2,phi=0.0)
     plt.legend(loc=1)
     plt.show()
 
-    #a.plot_storaged('d')
+    a.plot_storaged('d',False)
     a.plot_theoric(x,'d',theta=pi/2,phi=0)
     plt.legend(loc=1)
     plt.show()
 
-    #a.plot_storaged('l')
+    a.plot_storaged('l',False)
     a.plot_theoric(x,'l',theta=pi/2,phi=0)
     plt.legend(loc=1)
     plt.show()
 
-    #a.plot_storaged('adg')
-    a.plot_theoric(x,'adg',theta=pi/2,phi=0)
+    a.plot_storaged('adg',False)
+    #a.plot_theoric(x,'adg',theta=pi/2,phi=0)
     plt.legend(loc=1)
     plt.show()
 # 
-    #a.plot_storaged('hw')
+    a.plot_storaged('hw',False)
     a.plot_theoric(x,'hw',theta=pi/2,phi=0)
-
-    #a.plot_theoric(x,'h',theta=pi/2,phi=0)
     plt.legend(loc=1)
     plt.show()
     #-----------------------------------------------------------------------------

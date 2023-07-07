@@ -20,8 +20,8 @@ def get_t_noMarkov2(lamb, t):
     return t_noMarkov
 
 def plot_space(mode):
-    size = 200
-    t = linspace(0,120,size)
+    size = 20
+    t = linspace(0,60,size)
     lamb_list = linspace(0,0.08,size)
     z = zeros((size,size));    j = 0;    k = 0
     for p in t:

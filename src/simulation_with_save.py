@@ -219,7 +219,7 @@ class Simulate(object):
         plt.ylabel(' Coerência ')
         plt.legend(loc=0)
         plt.savefig(f'noMarkov/figures/automatic/{self.map_name}.png')
-        plt.show()
+        #plt.show()
 
     def plots2(self, list_p, coerencias_L):
         fig, ax = plt.subplots()
@@ -368,7 +368,7 @@ class Simulate(object):
         if save:
             with open(f'noMarkov/data/{self.map_name}/coerencia_L_e_R.pkl', 'wb') as f:
                 pickle.dump(mylist, f)
-        #self.plot_theoric_map(theta, phi)
+        self.plot_theoric_map(theta, phi)
         self.plots_markov(self.list_p, self.coerencias_L)
 
     
@@ -380,11 +380,11 @@ class Simulate(object):
 def main():
     n_qubits = 2
     d_rho_A = 2
-    list_p = np.linspace(0.001,60,3)
-    epochs = 1
-    step_to_start = 1
-    rho_AB = QCH.rho_AB_ad
-    S = Simulate('ad', n_qubits, d_rho_A, list_p, epochs, step_to_start, rho_AB)
+    list_p = np.linspace(0.001,60,21)
+    epochs = 120
+    step_to_start = 80
+    rho_AB = QCH.rho_AB_pf
+    S = Simulate('pf', n_qubits, d_rho_A, list_p, epochs, step_to_start, rho_AB)
     #list_p = S.get_list_p_noMarkov()
     # print(list_p)
     # print(type(list_p))
