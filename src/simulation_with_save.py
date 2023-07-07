@@ -386,10 +386,12 @@ class Simulate(object):
 def main():
     n_qubits = 2
     d_rho_A = 2
-    list_p = np.linspace(0,30,4)
-    list_p = get_list_p_noMarkov(list_p)
-    print(list_p)
+    list_p = np.linspace(0,100,21)
+    list_p = get_list_p_noMarkov(list_p,'Costa')
+    list_p = [i/max(list_p) for i in list_p]
+    print('Costa = ', list_p)
     print(type(list_p))
+    s.exit()
 
 
     epochs = 1

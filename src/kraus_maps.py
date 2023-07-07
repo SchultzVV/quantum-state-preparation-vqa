@@ -8,14 +8,19 @@ from numpy import linspace
 #import torch
 from torch import tensor
 
-def get_list_p_noMarkov(list_p):
+def get_list_p_noMarkov(list_p, type):
         lamb = 0.05
         gamma_0 = 2.8
         list_p_noMarkov = []
-        def non_markov_list_p(lamb,gamma_0,t):
-            d = sqrt(2*gamma_0*lamb-lamb**2)
-            result = exp(-lamb*t)*(cos(d*t/2)+(lamb/d)*sin(d*t/2))**2
-            return result
+        if type == 'Bellomo':
+            def non_markov_list_p(lamb,gamma_0,t):
+                d = sqrt(2*gamma_0*lamb-lamb**2)
+                result = exp(-lamb*t)*(cos(d*t/2)+(lamb/d)*sin(d*t/2))**2
+                return result
+        if type == 'Costa':
+            def non_markov_list_p(lamb,gamma_0,t):
+                result = 1-exp(-lamb*t)*(cos(t/2)+(lamb)*sin(t/2))
+                return result
         for p in list_p:
             list_p_noMarkov.append(non_markov_list_p(lamb,gamma_0,p))
         return list_p_noMarkov
@@ -131,48 +136,7 @@ class QuantumChannels(object):
                         ]])
         return state
 
-    def rho_AB_hw2(theta, phi, p):#, gamma):
-        N = 0.5
-        state = Matrix([[sqrt(p/3), # |0000\rangle 
-                        sqrt((1-p)/6), # |0001\rangle 
-                        sqrt((1-p)/6), # |0010\rangle 
-                        0, # |0011\rangle 
-                        sqrt(p/3) ,# |0100\rangle  
-                        sqrt((1-p)/6)*(1j*sqrt(3)-1)/2 ,# |0101\rangle 
-                        -sqrt((1-p)/6)*(1j*sqrt(3)+1)/2 ,# |0110\rangle 
-                        0, # |0111\rangle  
-                        sqrt(p/3) ,# |1000\rangle 
-                        -sqrt((1-p)/6)*(1j*sqrt(3)+1)/2 ,# |1001\rangle 
-                        sqrt((1-p)/6)*(1j*sqrt(3)-1)/2 ,# |1010\rangle  
-                        0, # |1011\rangle 
-                        0, # |1100\rangle
-                        0, # |1101\rangle
-                        0, # |1110\rangle
-                        0  # |1111\rangle
-                        ]])
-        return state
 
-    # @staticmethod
-    def rho_AB_hw2(theta, phi, p):#, gamma):
-        N = 0.5
-        state = Matrix([[sqrt(p/3), # |0000\rangle 
-                         sqrt(p/3), # |0001\rangle 
-                         sqrt(p/3), # |0010\rangle 
-                         0, # |0011\rangle 
-                         sqrt(p/3), # |0100\rangle 
-                         sqrt(p/3)*(1j*sqrt(3)-1)/(2), # |0101\rangle 
-                         sqrt(p/3)*(1j*sqrt(3)+1)/(2), # |0110\rangle 
-                         0, # |0111\rangle 
-                         sqrt(p/3), # |1000\rangle 
-                         sqrt(p/3)*(1j*sqrt(3)+1)/(2), # |1001\rangle 
-                         sqrt(p/3)*(1j*sqrt(3)-1)/(2), # |1010\rangle 
-                         0, # |1011\rangle 
-                         0, # |1100\rangle 
-                         0, # |1101\rangle 
-                         0, # |1110\rangle 
-                         0, # |1111\rangle
-                        ]])
-        return state
     @staticmethod
     def rho_AB_hw(theta, phi, p):#, gamma):
         N = 0.5
