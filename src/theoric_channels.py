@@ -10,7 +10,7 @@ import pickle
 import sys
 from kraus_maps import get_list_p_noMarkov
 
-sys.path.append('runtime-qiskit')
+#sys.path.append('runtime-qiskit')
 sys.path.append('src')
 
 class TheoricMaps():
