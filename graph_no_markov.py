@@ -11,14 +11,6 @@ def non_markov_t_Ana(lamb,t):
     result = 1 - exp(-lamb*t)*(cos(t/2)+lamb*sin(t/2))
     return result
 
-def get_t_noMarkov2(lamb, t):
-    #lamb = 5
-    #gamma_0 = 2.8
-    t_noMarkov = []
-    for p in t:
-        t_noMarkov.append(non_markov_t_Ana(lamb,p))
-    return t_noMarkov
-
 def plot_space(mode):
     size = 20
     t = linspace(0,60,size)
