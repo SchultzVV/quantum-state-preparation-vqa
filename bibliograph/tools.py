@@ -2,7 +2,7 @@
 from torch.autograd import Variable
 import torch
 from rsvg import rsvg
-from rdmg import rdm_ginibre
+# from rdmg import rdm_ginibre
 import pennylane as qml
 import matplotlib.pyplot as plt
 import numpy as np
@@ -65,12 +65,12 @@ def init_state_rsvg(n_qb):
     target_op = torch.tensor(target_op)
     return target_vector, target_op
 
-def init_state_rdm_ginibre(n_qb):
-    d = 2**n_qb
-    rho = rdm_ginibre(d)
-    print(np.trace(np.dot(rho,rho)))
-    target_op = torch.tensor(rho)
-    return target_op
+# def init_state_rdm_ginibre(n_qb):
+    # d = 2**n_qb
+    # rho = rdm_ginibre(d)
+    # print(np.trace(np.dot(rho,rho)))
+    # target_op = torch.tensor(rho)
+    # return target_op
 
 def init_state_exp_val(d):
     rrho = rdm_ginibre(4)
